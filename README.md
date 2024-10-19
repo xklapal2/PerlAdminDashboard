@@ -1,3 +1,6 @@
+
+[TOC]
+
 # PerlAdminDashboard
 
 A web application built in Perl using the Dancer2 micro-framework. The goal is to create a simple helpdesk for sysadmins and a dashboard for monitoring system resources.
@@ -37,3 +40,31 @@ The web app includes several functionalities:
 - Frontend
 
   - **HTML**, **JavaScript**, [**Tailwind**](https://tailwindcss.com/) (**CSS**)
+
+
+## Prerequisites:
+
+1. Install Perl
+1. Install Perl module manager
+  ```bash
+  sudo apt update
+  sudo apt install cpanminus
+  ```
+3. Install Dancer2 micro-framework
+```bash
+sudo cpanm Dancer2
+```
+
+## App modules
+
+### 1 Application
+
+1. Setup basic app with home endpoint on route '/'.
+2. Run application.
+
+```bash
+plackup app.psgi
+
+HTTP::Server::PSGI: Accepting connections at http://0:5000/
+127.0.0.1 - - [19/Oct/2024:14:26:52 +0200] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
+```
