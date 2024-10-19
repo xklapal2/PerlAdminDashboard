@@ -60,6 +60,17 @@ The web app includes several functionalities:
    ```bash
    sudo cpanm Crypt::Argon2
    ```
+1. Install database `SQL Lite`
+
+   ```bash
+   sudo apt install sqlite3
+   sqlite3 dashboard.db
+   ```
+1. Install database plugins `Dancer2::Plugin::Database`, `DBI`, `DBD::SQLite`
+
+   ```bash
+   sudo cpanm Dancer2::Plugin::Database DBI DBD::SQLite
+   ```
 1. 
 
 ## App modules
@@ -67,16 +78,41 @@ The web app includes several functionalities:
 ### 1 Application
 
 1. Setup basic app with home endpoint on route '/'.
+
 2. Create View for default route.
+
    - Views or `templates` are located in `view` folder.
+
 3. Run application.
 
-```bash
-plackup app.psgi
+   ```bash
+   plackup app.psgi
+   
+   HTTP::Server::PSGI: Accepting connections at http://0:5000/
+   127.0.0.1 - - [19/Oct/2024:14:26:52 +0200] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
+   ```
 
-HTTP::Server::PSGI: Accepting connections at http://0:5000/
-127.0.0.1 - - [19/Oct/2024:14:26:52 +0200] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
-```
+4. Automatic reloads on file save using `-r`.
+
+   ```bash
+   plackup app.psgi -r
+   ```
+
+5. Throw reasonable-looking errors to the user instead of crashing the application.
+
+   - Set `show_stacktrace` in `app.psgi`
+
+     ```perl
+     set show_stacktrace => $ENV{DANCER_ENVIRONMENT};
+     ```
+
+   - Set environment on application start using
+
+     ```bash
+     DANCER_ENVIRONMENT=1 plackup app.psgi -r
+     ```
+
+6. 
 
 ### 2 Authentication
 
@@ -123,7 +159,7 @@ HTTP::Server::PSGI: Accepting connections at http://0:5000/
 
    ```perl
    # option1
-   use lib '.'; # TODO: findout why it does not work without it
+   use lib '.'; # since module is not located in default @NIC path then it's required to specify path
    use Services::Crypto::PasswordHasher;
    
    my $password = "password";
@@ -132,12 +168,8 @@ HTTP::Server::PSGI: Accepting connections at http://0:5000/
    
    # OR Option2
    use lib '.';
-   use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/;
+   use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/; # import methods
    
    my $hash = hashPassword($password);
    ```
-
-3. Creating [alias](https://metacpan.org/pod/Package::Alias) for long namespace:
-
-   - 
 
