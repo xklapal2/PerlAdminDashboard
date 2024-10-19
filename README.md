@@ -44,23 +44,32 @@ The web app includes several functionalities:
 
 ## Prerequisites:
 
-1. Install Perl
-1. Install Perl module manager
-  ```bash
-  sudo apt update
-  sudo apt install cpanminus
-  ```
-3. Install Dancer2 micro-framework
-```bash
-sudo cpanm Dancer2
-```
+1. Install `Perl`
+1. Install `Perl module manager`
+
+   ```bash
+   sudo apt install cpanminus
+   ```
+1. Install `Dancer2` micro-framework
+
+   ```bash
+   sudo cpanm Dancer2
+   ```
+1. Install [hashing module](https://metacpan.org/pod/Crypt::Argon2)
+
+   ```bash
+   sudo cpanm Crypt::Argon2
+   ```
+1. 
 
 ## App modules
 
 ### 1 Application
 
 1. Setup basic app with home endpoint on route '/'.
-2. Run application.
+2. Create View for default route.
+   - Views or `templates` are located in `view` folder.
+3. Run application.
 
 ```bash
 plackup app.psgi
@@ -68,3 +77,67 @@ plackup app.psgi
 HTTP::Server::PSGI: Accepting connections at http://0:5000/
 127.0.0.1 - - [19/Oct/2024:14:26:52 +0200] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
 ```
+
+### 2 Authentication
+
+#### 2.1 [Creating First Standalone Module](https://www.geeksforgeeks.org/perl-modules/)
+
+1. The module file is named `PasswordHasher` with the extension `.pm` (e.g., `PasswordHasher.pm`).
+
+2. The module's first line contains the **package declaration** (`package services::crypto::PasswordHasher;`), and the package name should match the file name (without the `.pm` extension).
+
+   - Package name mus follow folder structure.
+
+   ```bash
+   .
+   ├── app.psgi
+   ├── Services
+   │   └── Crypto
+   │   │   └── PasswordHasher.pm
+   └── views
+       └── index.tt
+   ```
+
+3. A package must always return a **true** value to indicate it was loaded successfully. Typically, this is done by returning `1` at the end of the file.
+
+##### Exporting, Including and aliases
+
+1. Export module subroutines
+
+   ```perl
+   use Exporter 'import'; # Import the Exporter module
+   our @EXPORT_OK = qw(hashPassword verifyPassword); # Functions to export
+   
+   sub hashPassword {
+       # feature implementation
+   }
+   
+   sub verifyPassword {
+       # feature implementation
+   }
+   
+   1;
+   ```
+
+2. Including is done using `use` keyword and **namespace** follows `use Services::Crypto::PassworHasher;`.
+
+   ```perl
+   # option1
+   use lib '.'; # TODO: findout why it does not work without it
+   use Services::Crypto::PasswordHasher;
+   
+   my $password = "password";
+   my $hash = Services::Crypto::PasswordHasher::hashPassword($password);
+   print "Hashed Password: $hash\n";
+   
+   # OR Option2
+   use lib '.';
+   use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/;
+   
+   my $hash = hashPassword($password);
+   ```
+
+3. Creating [alias](https://metacpan.org/pod/Package::Alias) for long namespace:
+
+   - 
+

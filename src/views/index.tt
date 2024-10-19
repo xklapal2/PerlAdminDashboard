@@ -1,1 +1,5 @@
 <h1>AdminDashboard</h1>
+
+[% password %] <br />
+[% hash %] <br />
+[% isValid %]
