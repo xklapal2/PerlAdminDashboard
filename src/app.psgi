@@ -8,7 +8,9 @@ use Dancer2;
 use lib '.';
 use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/;
 
-set show_stacktrace => $ENV{DANCER_ENVIRONMENT}; # enables showing stack_trace in InternalServerError responses
+# configurations
+set show_stacktrace => $ENV{DANCER_IS_ENVIRONMENT}; # enables reasonable error pages in development environment
+set log => 'warning'; # set logging level
 
 # Home and Login page
 get '/' => sub {

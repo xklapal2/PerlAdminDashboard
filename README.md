@@ -103,13 +103,13 @@ The web app includes several functionalities:
    - Set `show_stacktrace` in `app.psgi`
 
      ```perl
-     set show_stacktrace => $ENV{DANCER_ENVIRONMENT};
+     set show_stacktrace => $ENV{DANCER_IS_ENVIRONMENT};
      ```
 
    - Set environment on application start using
 
      ```bash
-     DANCER_ENVIRONMENT=1 plackup app.psgi -r
+     DANCER_IS_ENVIRONMENT=1 plackup app.psgi -r
      ```
 
 6. 
