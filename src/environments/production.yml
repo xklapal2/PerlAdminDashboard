@@ -1,0 +1,9 @@
+warnings: 0
+show_stacktrace: 0
+startup_info: 1
+log: "warning"
+logger: "file"
+engines:
+  logger:
+    file:
+      file: "logs/production.log"

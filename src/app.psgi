@@ -8,10 +8,6 @@ use Dancer2;
 use lib '.';
 use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/;
 
-# configurations
-set show_stacktrace => $ENV{DANCER_IS_ENVIRONMENT}; # enables reasonable error pages in development environment
-set log => 'warning'; # set logging level
-
 # Home and Login page
 get '/' => sub {
 my $password = "secret";
@@ -31,6 +27,12 @@ my $isValid = verifyPassword($hash, $password);
         password => $password,
         hash => $hash
     };
+};
+
+get '/config' => sub {
+    # $a = 10 /0;
+    my $config = config();
+    return '<pre>' . to_json($config, {pretty => 1, canonical => 1}) . '</pre>';
 };
 
 App->to_app;

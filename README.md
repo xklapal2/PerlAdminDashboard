@@ -98,21 +98,38 @@ The web app includes several functionalities:
    plackup app.psgi -r
    ```
 
-5. Throw reasonable-looking errors to the user instead of crashing the application.
+5. Throw reasonable-looking errors to the user instead of crashing the application. **- It is moved to configuration file.**
 
    - Set `show_stacktrace` in `app.psgi`
 
      ```perl
-     set show_stacktrace => $ENV{DANCER_IS_ENVIRONMENT};
+     # configurations
+     set show_stacktrace => $ENV{DANCER_ENVIRONMENT};
      ```
 
    - Set environment on application start using
 
      ```bash
-     DANCER_IS_ENVIRONMENT=1 plackup app.psgi -r
+     DANCER_ENVIRONMENT=1 plackup app.psgi -r
      ```
 
-6. 
+6. Set log level in `app.psgi` **- It is moved to configuration file.**
+
+   ```perl
+   set log => 'warning'; # set logging level
+   ```
+
+7. [Set application configuration](https://metacpan.org/dist/Dancer2/view/lib/Dancer2/Config.pod).
+
+   - Default configuration file is located in **app root** `src/config.yml`. This file contains **default values**.
+   - Environment specific files are located in `src/environment/{env}.yml`. These contains **environment specific values**.
+   - New run application command:
+
+   ```bash
+   DANCER_ENVIRONMENT=development plackup app.psgi -r
+   ```
+
+8. 
 
 ### 2 Authentication
 
