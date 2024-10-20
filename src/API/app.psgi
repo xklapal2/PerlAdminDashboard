@@ -57,9 +57,15 @@ get '/config' => sub {
 };
 
 get '/api/fetchEmails' => sub {
-    getEmails('imap.gmail.com', 993, 'numkatst@gmail.com', 'o22b*a$Vnx@iu%');
+
+    my $emailConfig = config->{email};
+
+    my @emails = getEmails($emailConfig);
+    my $emailsJson = to_json(\@emails, { pretty => 1, canonical => 1 });
+
     status 200;
-    return 'Ok.';
+    # return 'ok';
+    return '<pre>' . $emailsJson . '</pre>';
 };
 
 hook before => sub {
@@ -75,4 +81,4 @@ hook before => sub {
     }
 };
 
-App->to_app;
+start;

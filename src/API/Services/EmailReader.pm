@@ -1,49 +1,38 @@
-package Services::EmailReader;
-
 use strict;
 use warnings;
 use Mail::IMAPClient;
 use IO::Socket::SSL;
 use MIME::Parser;
 use Exporter 'import'; # Import the Exporter module
+use Data::Dumper;      # For debugging
 
 our @EXPORT_OK = qw(getEmails); # Functions to export
 
-sub getEmails{
+
+# Opens connection to the mailbox in order to read emails and creates new ARRAY of HASHes where every array-item represents single email
+sub getEmails {
     my ($emailConfig) = @_;
 
-    # Connect to Gmail IMAP server
-    my $imap = Mail::IMAPClient->new(
-        Server   => $emailConfig->{imapHost},
-        User     => $emailConfig->{username},
-        Password => $emailConfig->{password},
-        Port     => $emailConfig->{imapPort},
-        Ssl      => 1,
-        Uid      => 1,  # Use UID for message identification
-    ) or die "Unable to connect to IMAP server: $@\n";
+    my $imap = createImapClient($emailConfig);
 
-    $imap->select('INBOX') or die "Unable to select INBOX: $@\n";
+    if (!$imap) {
+        die "Unable to connect to IMAP server: $@\n";
+    }
+
+    $imap->select('INBOX') or die "Unable to select INBOX: $@\n"; # Open INBOX folder
 
     # Search for all messages in the inbox
     my @messages = $imap->search('ALL') or die "Search failed: $@\n";
 
-    my @emails = [];
+    my @emails;
 
     foreach my $messageId (@messages) {
-        # Get body
-        my $emailBody = $imap->message_string($messageId);
 
-        # Parse the email body (optional, use MIME::Parser for complex emails)
-        my $parser = MIME::Parser->new;
-        my $entity = $parser->parse_data($emailBody);
+        print "\n\nMSG_ID: $messageId\n\n";
 
-        # Check if the bodyhandle is defined before calling as_string
-        my $body;
-        if (my $body_handle = $entity->bodyhandle) {
-            $body = $body_handle->as_string;
-        } else {
-            $body = "Unable to retrieve body";
-        }
+        my $rawBody = $imap->message_string($messageId); # Get body raw
+
+        my $body = processRawBody($rawBody);
 
         # Get other parameters
         my $sender = $imap->get_header($messageId, "From");
@@ -51,22 +40,102 @@ sub getEmails{
         my $subject = $imap->get_header($messageId, "Subject");
 
         push @emails, {
+            messageId => $messageId,
             sender  => $sender,
             date    => $date,
             subject => $subject,
             body    => $body
         };
-
-        # Output the details
-        print "Sender: $sender\n";
-        print "Subject: $subject\n";
-        print "Date: $date\n";
-        print "Body: $body\n";
-        print "==========================\n";
     }
 
     # Logout and close connection
     $imap->logout();
 
     return @emails;
+}
+
+sub createImapClient {
+    my ($emailConfig) = @_;
+
+    return Mail::IMAPClient->new(
+        Server   => $emailConfig->{imapHost},
+        User     => $emailConfig->{username},
+        Password => $emailConfig->{password},
+        Port     => $emailConfig->{imapPort},
+        Ssl      => 1,
+        Uid      => 1,
+    );
+}
+
+sub processRawBody {
+    my ($rawBody) = @_;
+
+    my $parser = MIME::Parser->new; # Parse the email body (optional, use MIME::Parser for complex emails)
+    $parser->decode_bodies(1);  # Decode the bodies automatically
+    my $entity = $parser->parse_data($rawBody);
+
+    #print Dumper($entity);   # Print the entity for debugging (structure inspection)
+
+    my $body;
+    if ($entity->parts > 1) {
+        $body = processMultiPartMessage($entity->parts);
+    } else {
+        $body = processSinglePartMessage($entity->bodyhandle);
+    }
+
+    # If we couldn't find the text/plain part, try getting the entire message as a fallback
+    if (!defined $body) {
+        $body = $entity->as_string;
+    }
+
+    return $body;
+}
+
+# Single-part message, just try to get the bodyhandle
+sub processSinglePartMessage {
+    my ($bodyHandle) = @_;
+
+    if (my $handle = $bodyHandle) {
+        my $content = $handle->as_string;
+
+        removeParsedBodyFile($handle);
+
+        return $content;
+    } else {
+        return "Unable to retrieve body";
+    }
+}
+
+# If it's a multipart message, loop through the parts and extract the plain text part
+sub processMultiPartMessage {
+    my ($emailParts) = @_;
+
+    foreach my $part ($emailParts) {
+        if ($part->head->mime_type eq 'text/plain') {
+            my $body_handle = $part->bodyhandle;
+            my $content = $body_handle->as_string;
+
+            removeParsedBodyFile($body_handle);
+
+            return $content;
+        }
+    }
+}
+
+sub removeParsedBodyFile
+{
+    my ($bodyhandle) = @_;
+
+    if (
+        $bodyhandle &&
+        $bodyhandle->isa('MIME::Body::File') &&
+        -e $bodyhandle->path
+    ) {
+        # print "\n\n$bodyhandle->{path}\n\n";
+        # print Dumper($bodyhandle);
+        # print "\n\n$bodyhandle->{path}\n\n";
+        # print Dumper($bodyhandle->path);
+
+        unlink $bodyhandle->path; # Delete the file
+    }
 }
