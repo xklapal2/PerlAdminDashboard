@@ -58,13 +58,12 @@ The web app includes several functionalities:
 1. Install [hashing module](https://metacpan.org/pod/Crypt::Argon2)
 
    ```bash
-   sudo cpanm Crypt::Argon2
+   sudo cpanm Crypt::Argon2 Crypt::URandom
    ```
 1. Install database `SQL Lite`
 
    ```bash
    sudo apt install sqlite3
-   sqlite3 dashboard.db
    ```
 1. Install database plugins `Dancer2::Plugin::Database`, `DBI`, `DBD::SQLite`
 
@@ -72,6 +71,10 @@ The web app includes several functionalities:
    sudo cpanm Dancer2::Plugin::Database DBI DBD::SQLite
    ```
 1. 
+
+## Sources
+
+During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaCPAN - Dancer2 docs](https://metacpan.org/dist/Dancer2/view/lib/Dancer2/Manual.pod).  To better understand the Dancer2 application infrastructure, I also worked through the [CodeMaven - Dancer2 tutorial](https://slides.code-maven.com/dancer/dancer.html).
 
 ## App modules
 
@@ -189,4 +192,32 @@ The web app includes several functionalities:
    
    my $hash = hashPassword($password);
    ```
+
+#### 2.2 Create SQLite database and `users` table with default `Inbuilt` account.
+
+```sql
+-- in cli run script 
+sqlite3 AdminDashboard.db
+SQLite version 3.40.1 2022-12-28 14:03:47
+Enter ".help" for usage hints.
+
+-- create table
+sqlite> CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL
+);
+
+-- add new account
+sqlite> INSERT INTO users (username, firstName, lastName, password) VALUES ('admin', 'Admin','Inbuilt', '$argon2id$v=19$m=32768,t=3,p=1$ZWZLdWNCeE5SVGJFaUt0UG9pWjBDQT09$mrFypaOLlrCJ5m21BH4Aog');
+
+-- verify
+sqlite> SELECT * FROM users;
+1|admin|$argon2id$v=19$m=32768,t=3,p=1$ZWZLdWNCeE5SVGJFaUt0UG9pWjBDQT09$mrFypaOLlrCJ5m21BH4Aog|Admin|Inbuilt
+
+-- exit
+sqlite> .exit
+```
 
