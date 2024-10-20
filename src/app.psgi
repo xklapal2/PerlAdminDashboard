@@ -4,33 +4,37 @@ use strict;
 use warnings;
 use Dancer2;
 
+use Dancer2::Plugin::Database;
+
 # custom modules
 use lib '.';
 use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/;
 
+####################################################
+###                    Ednpoints                 ###
+####################################################
+
 # Home and Login page
 get '/' => sub {
-my $password = "secret";
-my $hash = hashPassword($password);
-print "Hashed Password: $hash\n";
+    template 'index', {};
+};
 
-my $isValid = verifyPassword($hash, $password);
+# Handle login
+post '/login' => sub {
+    my $username = body_parameters->get('username');
+    my $password = body_parameters->get('password');
 
-    if ($isValid) {
-        print "Password is valid\n";
+    my $user = database->quick_select('users', { username => $username });
+
+    if ($user && verifyPassword($user->{password}, $password)) {
+        session user => $user->{username};
+        return redirect '/config';
     } else {
-        print "Password is invalid\n";
+        return "Invalid username or password.";
     }
-
-    template 'index', {
-        isValid => $isValid,
-        password => $password,
-        hash => $hash
-    };
 };
 
 get '/config' => sub {
-    # $a = 10 /0;
     my $config = config();
     return '<pre>' . to_json($config, {pretty => 1, canonical => 1}) . '</pre>';
 };

@@ -17,8 +17,12 @@ sub generateSalt {
 
 # subroutine returns both, hash and salt
 sub hashPassword {
-    my ($password) = @_;
-    my $salt = generateSalt();
+    my ($password, $salt) = @_;
+
+    if (!defined $salt) {
+        $salt = generateSalt();
+    }
+
     my $timeCost = 3;
     my $memoryCost = '32M';
     my $parallelism = 1;
@@ -32,6 +36,7 @@ sub hashPassword {
 
 sub verifyPassword {
     my ($hashedPassword, $password) = @_;
+
     return argon2_verify($hashedPassword, $password);
 }
 

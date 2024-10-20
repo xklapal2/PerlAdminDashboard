@@ -5,6 +5,11 @@ warnings: 0
 show_stacktrace: 0
 startup_info: 1
 
+plugins:
+  Database:
+    driver: SQLite
+    database: database/persistance.db
+
 # logging
 logger: "console"
 log: "debug"

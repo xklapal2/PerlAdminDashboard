@@ -1,6 +1,13 @@
 warnings: 0
 show_stacktrace: 0
 startup_info: 1
+
+plugins:
+  Database:
+    driver: SQLite
+    database: database/AdminDashboard.db
+
+# logging
 log: "warning"
 logger: "file"
 engines:

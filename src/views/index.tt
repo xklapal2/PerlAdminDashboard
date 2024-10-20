@@ -1,5 +1,9 @@
 <h1>AdminDashboard</h1>
 
-[% password %] <br />
-[% hash %] <br />
-[% isValid %]
+<br />
+
+<form method="POST" action="/login">
+    Username: <input type="text" name="username" required><br>
+    Password: <input type="password" name="password" required><br>
+    <input type="submit" value="Login">
+</form>
