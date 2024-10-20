@@ -10,6 +10,13 @@ plugins:
     driver: SQLite
     database: database/persistance.db
 
+email:
+  imapHost: 'imap.fastmail.com'
+  imapPort: 993
+  username: ''
+  password: ''
+
+
 # logging
 logger: "console"
 log: "debug"

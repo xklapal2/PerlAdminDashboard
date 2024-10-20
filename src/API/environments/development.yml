@@ -7,6 +7,10 @@ plugins:
     driver: SQLite
     database: database/AdminDashboard.db
 
+email:
+  username: ''
+  password: ''
+
 # logging
 logger: "console"
 log: "error"

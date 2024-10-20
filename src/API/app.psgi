@@ -10,6 +10,7 @@ use URI;
 # custom modules
 use lib '.';
 use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/;
+use Services::EmailReader qw/getEmails/;
 
 ####################################################
 ###                    Endpoints                 ###
@@ -53,6 +54,12 @@ get '/monitoring' => sub {
 get '/config' => sub {
     my $config = config();
     return '<pre>' . to_json($config, { pretty => 1, canonical => 1 }) . '</pre>';
+};
+
+get '/api/fetchEmails' => sub {
+    getEmails('imap.gmail.com', 993, 'numkatst@gmail.com', 'o22b*a$Vnx@iu%');
+    status 200;
+    return 'Ok.';
 };
 
 hook before => sub {
