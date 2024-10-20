@@ -13,4 +13,4 @@ email:
 
 # logging
 logger: "console"
-log: "error"
+log: "debug"
