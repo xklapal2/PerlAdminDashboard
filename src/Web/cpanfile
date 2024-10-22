@@ -1,12 +1,18 @@
 requires "Dancer2" => "1.1.1";
 
+# => "0" means that th package does not specify minimal version
+
+# Required modules for PasswordHasher module
+requires "Crypt::Argon2" => "0";     # For password hashing
+requires "MIME::Base64"  => "0";      # For encoding salt in base64
+requires "Crypt::URandom" => "0";     # For generating random bytes
+
 recommends "YAML"                    => "0";
 recommends "URL::Encode::XS"         => "0";
 recommends "CGI::Deurl::XS"          => "0";
 recommends "CBOR::XS"                => "0";
 recommends "YAML::XS"                => "0";
 recommends "Class::XSAccessor"       => "0";
-recommends "Crypt::URandom"          => "0";
 recommends "HTTP::XSCookies"         => "0";
 recommends "HTTP::XSHeaders"         => "0";
 recommends "Math::Random::ISAAC::XS" => "0";
@@ -20,7 +26,6 @@ feature 'accelerate', 'Accelerate Dancer2 app performance with XS modules' => su
     requires "YAML::XS"                => "0";
     requires "Class::XSAccessor"       => "0";
     requires "Cpanel::JSON::XS"        => "0";
-    requires "Crypt::URandom"          => "0";
     requires "HTTP::XSCookies"         => "0";
     requires "HTTP::XSHeaders"         => "0";
     requires "Math::Random::ISAAC::XS" => "0";

@@ -1,12 +1,13 @@
-package Services::Crypto::PasswordHasher;
+package PasswordHasher;
 
 use strict;
 use warnings;
-use Exporter 'import'; # Import the Exporter module
+
 use Crypt::Argon2 qw/argon2id_pass argon2_verify/;
 use Crypt::URandom qw/urandom/;
 use MIME::Base64 qw/encode_base64/;
 
+use Exporter 'import'; # Import the Exporter module
 our @EXPORT_OK = qw(hashPassword verifyPassword); # Functions to export
 
 sub generateSalt {

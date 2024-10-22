@@ -86,28 +86,52 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
 
 ### 1 Application
 
-1. Setup basic app with home endpoint on route '/'.
-
-2. Create View for default route.
-
-   - Views or `templates` are located in `view` folder.
-
-3. Run application.
+1. Create default template using CLI and `Dancer2`:
 
    ```bash
-   plackup app.psgi
+   dancer2 gen -a <AppName>
+   
+   # App structure is created:
+   .
+   ├── bin
+   │   └── app.psgi # Application Entrypoint - startup file.
+   ├── config.yml # Default configuration file.
+   ├── cpanfile # This file is used to manage dependencies via CPAN.
+   ├── environments # Environment specific files e.g. development/production.yml.
+   ├── lib # Root directory of custom modules.
+   │   └── Web.pm # Represents endpoints which are loaded using app.psgi.
+   ├── Makefile.PL # This is a Perl module build file used to create a Makefile for your application.
+   ├── MANIFEST # This file lists all the files that are part of the distribution.
+   ├── MANIFEST.SKIP # This file specifies which files should be skipped when generating the MANIFEST. 
+   ├── public # Static files which are accessible through HTTP for client
+   │   ├── css
+   │   ├── images
+   │   └── javascripts
+   ├── t #  This directory is for tests, which are essential for ensuring the application's functionality.
+   │   ├── 001_base.t
+   │   └── 002_index_route.t
+   └── views # Frontend templates for data representation
+       ├── index.tt
+       └── layouts
+           └── main.tt # A main layout template that other templates can extend.
+   ```
+
+2. Run application.
+
+   ```bash
+   plackup bin/app.psgi
    
    HTTP::Server::PSGI: Accepting connections at http://0:5000/
    127.0.0.1 - - [19/Oct/2024:14:26:52 +0200] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
    ```
 
-4. Automatic reloads on file save using `-r`.
+3. Automatic reloads on file save using `-r`.
 
    ```bash
-   plackup app.psgi -r
+   plackup -r bin/app.psgi
    ```
 
-5. Throw reasonable-looking errors to the user instead of crashing the application. **- It is moved to configuration file.**
+4. Throw reasonable-looking errors to the user instead of crashing the application. **- It is moved to configuration file.**
 
    - Set `show_stacktrace` in `app.psgi`
 
@@ -119,26 +143,27 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
    - Set environment on application start using
 
      ```bash
-     DANCER_ENVIRONMENT=1 plackup app.psgi -r
+     DANCER_ENVIRONMENT=1 plackup bin/app.psgi
+     DANCER_ENVIRONMENT=1 plackup -r bin/app.psgi
      ```
 
-6. Set log level in `app.psgi` **- It is moved to configuration file.**
+5. Set log level in `app.psgi` **- It is moved to configuration file.**
 
    ```perl
    set log => 'warning'; # set logging level
    ```
 
-7. [Set application configuration](https://metacpan.org/dist/Dancer2/view/lib/Dancer2/Config.pod).
+6. [Set application configuration](https://metacpan.org/dist/Dancer2/view/lib/Dancer2/Config.pod).
 
    - Default configuration file is located in **app root** `src/config.yml`. This file contains **default values**.
    - Environment specific files are located in `src/environment/{env}.yml`. These contains **environment specific values**.
    - New run application command:
 
    ```bash
-   DANCER_ENVIRONMENT=development plackup app.psgi -r
+   DANCER_ENVIRONMENT=development plackup -r bin/app.psgi
    ```
 
-8. 
+7. 
 
 ### 2 Authentication
 

@@ -5,9 +5,24 @@ log: "warning"
 
 # log message to a file in logs/
 logger: "file"
+engines:
+  logger:
+    file:
+      file: "logs/production.log"
 
 # hide errors
 show_stacktrace: 0
 
 # disable server tokens in production environments
 no_server_tokens: 1
+
+warnings: 0
+
+plugins:
+  Database:
+    driver: SQLite
+    database: database/AdminDashboard.db
+
+email:
+  username: ''
+  password: ''
