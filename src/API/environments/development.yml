@@ -8,8 +8,8 @@ plugins:
     database: database/AdminDashboard.db
 
 email:
-  username: ''
-  password: ''
+  username: 'numkatst@fastmail.com'
+  password: '3e723a6n883b6d2r'
 
 # logging
 logger: "console"

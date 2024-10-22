@@ -70,6 +70,12 @@ The web app includes several functionalities:
    ```bash
    sudo cpanm Dancer2::Plugin::Database DBI DBD::SQLite
    ```
+1. Install IMAP, SSL and Mime type plugins
+
+   ```bash
+   sudo cpanm install Mail::IMAPClient IO::Socket::SSL MIME::Parser
+   ```
+
 1. 
 
 ## Sources

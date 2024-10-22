@@ -6,7 +6,6 @@ use warnings;
 use Dancer2;
 use Dancer2::Plugin::Database;
 use URI;
-use Try::Tiny;
 
 # custom modules
 use lib '.';
@@ -20,7 +19,23 @@ use Services::Constants;
 
 # Home - Helpdesk
 get '/' => sub {
-    return template 'index', {};
+    my @requests;
+
+    eval {
+        @requests = [database->quick_select('helpdeskRequests', {})];
+    };
+
+    if ($@) {
+        error "Failed to load helpdesk requests from database: $@";
+        # TODO: log $@
+        return template 'error', { errorMsg => "Failed to load helpeds requests." };
+    }
+
+    if(@requests){
+        return 'index', { requests => \@requests };
+    }
+
+    return '<pre>No requests yet...</pre>'
 };
 
 # Login page
