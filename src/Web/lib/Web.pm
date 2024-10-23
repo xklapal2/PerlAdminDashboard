@@ -10,7 +10,7 @@ use URI;
 
 # custom modules
 use PasswordHasher qw/hashPassword verifyPassword/;
-use EmailReader qw/getEmails/;
+use EmailReader    qw/getEmails/;
 use Constants;
 
 our $VERSION = '0.1';
@@ -24,33 +24,37 @@ get '/' => sub {
 };
 
 get '/hash' => sub {
+    my $person = Person->new( name => 'Alice', age => 30 );
+    print $person->describe();
+
     return hashPassword("secret");
 };
 
 # Home - Helpdesk
-get '/' => sub {
+get '/a' => sub {
     my @requests;
 
-    eval {
-        @requests = [database->quick_select('helpdeskRequests', {})];
-    };
+    eval { @requests = [ database->quick_select( 'helpdeskRequests', {} ) ]; };
 
     if ($@) {
         error "Failed to load helpdesk requests from database: $@";
+
         # TODO: log $@
-        return template 'error', { errorMsg => "Failed to load helpeds requests." };
+        return template 'error',
+          { errorMsg => "Failed to load helpeds requests." };
     }
 
-    if(@requests){
+    if (@requests) {
         return 'index', { requests => \@requests };
     }
 
-    return '<pre>No requests yet...</pre>'
+    return '<pre>No requests yet...</pre>';
 };
 
 # Login page
 get '/login' => sub {
-    my $returnUrl = query_parameters->get('returnUrl') || '/';  # Default return URL if none provided
+    my $returnUrl = query_parameters->get('returnUrl')
+      || '/';    # Default return URL if none provided
 
     # Ensure the returnUrl is URI-encoded to handle special characters
     $returnUrl = URI->new($returnUrl)->as_string;
@@ -60,16 +64,18 @@ get '/login' => sub {
 
 # Handle login
 post '/login' => sub {
-    my $username = body_parameters->get('username');
-    my $password = body_parameters->get('password');
-    my $returnUrl = body_parameters->get('returnUrl') || '/';  # Default return URL if none provided
+    my $username  = body_parameters->get('username');
+    my $password  = body_parameters->get('password');
+    my $returnUrl = body_parameters->get('returnUrl')
+      || '/';    # Default return URL if none provided
 
-    my $user = database->quick_select('users', { username => $username });
+    my $user = database->quick_select( 'users', { username => $username } );
 
-    if ($user && verifyPassword($user->{password}, $password)) {
+    if ( $user && verifyPassword( $user->{password}, $password ) ) {
         session user => $user->{username};
         return redirect $returnUrl;
-    } else {
+    }
+    else {
         return template 'login', { returnUrl => $returnUrl, loginFailed => 1 };
     }
 };
@@ -81,7 +87,10 @@ get '/monitoring' => sub {
 # Display config
 get '/config' => sub {
     my $config = config();
-    return '<pre>' . to_json($config, { pretty => 1, canonical => 1 }) . '</pre>';
+    return
+        '<pre>'
+      . to_json( $config, { pretty => 1, canonical => 1 } )
+      . '</pre>';
 };
 
 # Handle Fetch Emails
@@ -95,14 +104,17 @@ get '/api/fetchEmails' => sub {
 
     foreach my $email (@emails) {
         eval {
-            database->quick_insert('helpdeskRequests', {
-                messageId => $email->{messageId},
-                sender    => $email->{sender},
-                subject   => $email->{subject},
-                body      => $email->{body},
-                date      => $email->{date},
-                state     => Constants::HelpdeskRequestStateNew
-            });
+            database->quick_insert(
+                'helpdeskRequests',
+                {
+                    messageId => $email->{messageId},
+                    sender    => $email->{sender},
+                    subject   => $email->{subject},
+                    body      => $email->{body},
+                    date      => $email->{date},
+                    state     => Constants::HelpdeskRequestStateNew
+                }
+            );
 
             push @emailsToRemove, $email->{messageId};
             print "mail inserted: $email->{subject} \n";
@@ -110,15 +122,17 @@ get '/api/fetchEmails' => sub {
         };
 
         if ($@) {
-            error "Failed to insert email to database: date: $email->{date}, sender: $email->{sender}";
+            error
+"Failed to insert email to database: date: $email->{date}, sender: $email->{sender}";
         }
     }
 
     # TODO: Remove @emailsToRemove uisng IMAP
 
-    my $emailsJson = to_json(\@emails, { pretty => 1, canonical => 1 });
+    my $emailsJson = to_json( \@emails, { pretty => 1, canonical => 1 } );
 
     status 200;
+
     # return 'ok';
     return '<pre>' . $emailsJson . '</pre>';
 };
@@ -126,12 +140,12 @@ get '/api/fetchEmails' => sub {
 hook before => sub {
     my $currentPath = request->path;
 
-    if (!session('user') && $currentPath ne '/login') {
+    if ( !session('user') && $currentPath ne '/login' ) {
         my $returnUrl = request->uri;
         return redirect "/login?returnUrl=" . URI->new($returnUrl)->as_string;
     }
 
-    if(session('user') && $currentPath eq '/login'){
+    if ( session('user') && $currentPath eq '/login' ) {
         return redirect "/";
     }
 };
