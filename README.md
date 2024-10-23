@@ -70,11 +70,19 @@ The web app includes several functionalities:
    ```bash
    sudo cpanm Dancer2::Plugin::Database DBI DBD::SQLite
    ```
-1. Install IMAP, SSL and Mime type plugins
+1. Install IMAP, SSL and Mime type modules
 
    ```bash
    sudo cpanm install Mail::IMAPClient IO::Socket::SSL MIME::Parser
    ```
+
+1. Install `DateTime` and `DateTime format` modules
+
+   ```bash
+   sudo cpan DateTime DateTime::Format::Strptime
+   ```
+
+   
 
 1. 
 
@@ -232,23 +240,7 @@ sqlite3 AdminDashboard.db
 SQLite version 3.40.1 2022-12-28 14:03:47
 Enter ".help" for usage hints.
 
--- create table
-sqlite> CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    firstName TEXT NOT NULL,
-    lastName TEXT NOT NULL
-);
-
--- add new account
-sqlite> INSERT INTO users (username, firstName, lastName, password) VALUES ('admin', 'Admin','Inbuilt', '$argon2id$v=19$m=32768,t=3,p=1$ZWZLdWNCeE5SVGJFaUt0UG9pWjBDQT09$mrFypaOLlrCJ5m21BH4Aog');
-
--- verify
-sqlite> SELECT * FROM users;
-1|admin|$argon2id$v=19$m=32768,t=3,p=1$ZWZLdWNCeE5SVGJFaUt0UG9pWjBDQT09$mrFypaOLlrCJ5m21BH4Aog|Admin|Inbuilt
-
--- exit
-sqlite> .exit
+sqlite>  -- run SQL scripts from database.sql file
+sqlite> .exit -- exit
 ```
 

@@ -3,16 +3,24 @@ requires "Dancer2" => "1.1.1";
 # => "0" means that th package does not specify minimal version
 
 # Required modules for PasswordHasher.pm
+
+requires "Crypt::Argon2"  => "0";    # For password hashing
+requires "MIME::Base64"   => "0";    # For encoding salt in base64
+requires "Crypt::URandom" => "0";    # For generating random bytes
+
 # Required modules for EmailManager.pm
-
-requires "Crypt::Argon2" => "0";     # For password hashing
-requires "MIME::Base64"  => "0";      # For encoding salt in base64
-requires "Crypt::URandom" => "0";     # For generating random bytes
-
 requires "Mail::IMAPClient" => "0";
-requires "IO::Socket::SSL" => "0";
-requires "MIME::Parser" => "0";
-requires "Data::Dumper" => "0"; # For debugging
+requires "IO::Socket::SSL"  => "0";
+requires "MIME::Parser"     => "0";
+
+# Required modules for DateTimeParser.pm
+requires "DateTime"                   => "0";
+requires "DateTime::Format::Strptime" => "0";
+
+# Required modules for ObjectOriented support for Perl
+requires "Moose"                 => "0";
+requires "MooseX::NonMoose"      => "0";
+requires "MooseX::MarkAsMethods" => "0";
 
 recommends "YAML"                    => "0";
 recommends "URL::Encode::XS"         => "0";
@@ -27,7 +35,8 @@ recommends "MooX::TypeTiny"          => "0";
 recommends "Type::Tiny::XS"          => "0";
 recommends "Unicode::UTF8"           => "0";
 
-feature 'accelerate', 'Accelerate Dancer2 app performance with XS modules' => sub {
+feature 'accelerate',
+  'Accelerate Dancer2 app performance with XS modules' => sub {
     requires "URL::Encode::XS"         => "0";
     requires "CGI::Deurl::XS"          => "0";
     requires "YAML::XS"                => "0";
@@ -39,7 +48,7 @@ feature 'accelerate', 'Accelerate Dancer2 app performance with XS modules' => su
     requires "MooX::TypeTiny"          => "0";
     requires "Type::Tiny::XS"          => "0";
     requires "Unicode::UTF8"           => "0";
-};
+  };
 
 on "test" => sub {
     requires "Test::More"            => "0";

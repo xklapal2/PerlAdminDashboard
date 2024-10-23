@@ -15,6 +15,6 @@ CREATE TABLE IF NOT EXISTS helpdeskRequests (
     sender TEXT NOT NULL,
     subject TEXT NOT NULL,
     body TEXT NOT NULL,
-    date TEXT NOT NULL,
+    date DATETIME NOT NULL,
     state INTEGER DEFAULT 0
 );
