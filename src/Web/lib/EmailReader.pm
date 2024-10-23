@@ -6,11 +6,12 @@ use warnings;
 use Mail::IMAPClient;
 use IO::Socket::SSL;
 use MIME::Parser;
-use Data::Dumper; # For debugging
+use Data::Dumper;    # For debugging
 
-use Exporter 'import'; # Import the Exporter module
-our @EXPORT_OK = qw(getEmails); # Functions to export
+use DateTimeParser qw/parseEmailDateTime/;
 
+use Exporter 'import';             # Import the Exporter module
+our @EXPORT_OK = qw(getEmails);    # Functions to export
 
 # Opens connection to the mailbox in order to read emails and creates new ARRAY of HASHes where every array-item represents single email
 sub getEmails {
@@ -18,11 +19,12 @@ sub getEmails {
 
     my $imap = createImapClient($emailConfig);
 
-    if (!$imap) {
+    if ( !$imap ) {
         die "Unable to connect to IMAP server: $@\n";
     }
 
-    $imap->select('INBOX') or die "Unable to select INBOX: $@\n"; # Open INBOX folder
+    $imap->select('INBOX')
+      or die "Unable to select INBOX: $@\n";    # Open INBOX folder
 
     # Search for all messages in the inbox
     my @messages = $imap->search('ALL') or die "Search failed: $@\n";
@@ -33,21 +35,21 @@ sub getEmails {
 
         print "\n\nMSG_ID: $messageId\n\n";
 
-        my $rawBody = $imap->message_string($messageId); # Get body raw
+        my $rawBody = $imap->message_string($messageId);    # Get body raw
 
         my $body = processRawBody($rawBody);
 
         # Get other parameters
-        my $sender = $imap->get_header($messageId, "From");
-        my $date = $imap->get_header($messageId, "Date");
-        my $subject = $imap->get_header($messageId, "Subject");
+        my $sender  = $imap->get_header( $messageId, "From" );
+        my $date    = $imap->get_header( $messageId, "Date" );
+        my $subject = $imap->get_header( $messageId, "Subject" );
 
         push @emails, {
             messageId => $messageId,
-            sender  => $sender,
-            date    => $date,
-            subject => $subject,
-            body    => $body
+            sender    => $sender,
+            date      => parseEmailDateTime($date),    # parse dateTime
+            subject   => $subject,
+            body      => $body
         };
     }
 
@@ -73,21 +75,23 @@ sub createImapClient {
 sub processRawBody {
     my ($rawBody) = @_;
 
-    my $parser = MIME::Parser->new; # Parse the email body (optional, use MIME::Parser for complex emails)
-    $parser->decode_bodies(1);  # Decode the bodies automatically
+    my $parser = MIME::Parser->new
+      ;   # Parse the email body (optional, use MIME::Parser for complex emails)
+    $parser->decode_bodies(1);    # Decode the bodies automatically
     my $entity = $parser->parse_data($rawBody);
 
-    #print Dumper($entity);   # Print the entity for debugging (structure inspection)
+#print Dumper($entity);   # Print the entity for debugging (structure inspection)
 
     my $body;
-    if ($entity->parts > 1) {
-        $body = processMultiPartMessage($entity->parts);
-    } else {
-        $body = processSinglePartMessage($entity->bodyhandle);
+    if ( $entity->parts > 1 ) {
+        $body = processMultiPartMessage( $entity->parts );
+    }
+    else {
+        $body = processSinglePartMessage( $entity->bodyhandle );
     }
 
-    # If we couldn't find the text/plain part, try getting the entire message as a fallback
-    if (!defined $body) {
+# If we couldn't find the text/plain part, try getting the entire message as a fallback
+    if ( !defined $body ) {
         $body = $entity->as_string;
     }
 
@@ -98,13 +102,14 @@ sub processRawBody {
 sub processSinglePartMessage {
     my ($bodyHandle) = @_;
 
-    if (my $handle = $bodyHandle) {
+    if ( my $handle = $bodyHandle ) {
         my $content = $handle->as_string;
 
         removeParsedBodyFile($handle);
 
         return $content;
-    } else {
+    }
+    else {
         return "Unable to retrieve body";
     }
 }
@@ -114,9 +119,9 @@ sub processMultiPartMessage {
     my ($emailParts) = @_;
 
     foreach my $part ($emailParts) {
-        if ($part->head->mime_type eq 'text/plain') {
+        if ( $part->head->mime_type eq 'text/plain' ) {
             my $body_handle = $part->bodyhandle;
-            my $content = $body_handle->as_string;
+            my $content     = $body_handle->as_string;
 
             removeParsedBodyFile($body_handle);
 
@@ -125,20 +130,18 @@ sub processMultiPartMessage {
     }
 }
 
-sub removeParsedBodyFile
-{
+sub removeParsedBodyFile {
     my ($bodyhandle) = @_;
 
-    if (
-        $bodyhandle &&
-        $bodyhandle->isa('MIME::Body::File') &&
-        -e $bodyhandle->path
-    ) {
+    if (   $bodyhandle
+        && $bodyhandle->isa('MIME::Body::File')
+        && -e $bodyhandle->path )
+    {
         # print "\n\n$bodyhandle->{path}\n\n";
         # print Dumper($bodyhandle);
         # print "\n\n$bodyhandle->{path}\n\n";
         # print Dumper($bodyhandle->path);
 
-        unlink $bodyhandle->path; # Delete the file
+        unlink $bodyhandle->path;    # Delete the file
     }
 }
