@@ -1,11 +1,14 @@
+package EmailReader;
+
 use strict;
 use warnings;
+
 use Mail::IMAPClient;
 use IO::Socket::SSL;
 use MIME::Parser;
-use Exporter 'import'; # Import the Exporter module
-use Data::Dumper;      # For debugging
+use Data::Dumper; # For debugging
 
+use Exporter 'import'; # Import the Exporter module
 our @EXPORT_OK = qw(getEmails); # Functions to export
 
 

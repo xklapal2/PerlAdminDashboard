@@ -2,10 +2,17 @@ requires "Dancer2" => "1.1.1";
 
 # => "0" means that th package does not specify minimal version
 
-# Required modules for PasswordHasher module
+# Required modules for PasswordHasher.pm
+# Required modules for EmailManager.pm
+
 requires "Crypt::Argon2" => "0";     # For password hashing
 requires "MIME::Base64"  => "0";      # For encoding salt in base64
 requires "Crypt::URandom" => "0";     # For generating random bytes
+
+requires "Mail::IMAPClient" => "0";
+requires "IO::Socket::SSL" => "0";
+requires "MIME::Parser" => "0";
+requires "Data::Dumper" => "0"; # For debugging
 
 recommends "YAML"                    => "0";
 recommends "URL::Encode::XS"         => "0";

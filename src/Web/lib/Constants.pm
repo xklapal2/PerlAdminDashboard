@@ -1,4 +1,4 @@
-package Services::Constants;
+package Constants;
 
 use strict;
 use warnings;
