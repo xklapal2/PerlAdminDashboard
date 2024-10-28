@@ -1,151 +1,56 @@
+<h1 class="text-2xl mb-2">Helpdesk Requests</h1>
 
-<!--
-    Credit goes to the Ruby on Rails team for this page
-    has been heavily based on the default Rails page that is
-    built with a scaffolded application.
+    <table class="min-w-full bg-white border border-gray-200">
+    <thead class="bg-gray-100">
+        <tr class="text-left text-gray-600 uppercase text-xs font-semibold border-b border-gray-200">
+            <th class="py-3 px-4">Message ID</th>
+            <th class="py-3 px-4">Sender</th>
+            <th class="py-3 px-4">Subject</th>
+            <th class="py-3 px-4">Date</th>
+            <th class="py-3 px-4">State</th>
+            <th class="py-3 px-4">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="text-gray-700">
+        [% FOREACH request IN requests %]
+            <tr class="border-b hover:bg-gray-100">
+                <td class="py-2 px-4">[% request.messageId %]</td>
+                <td class="py-2 px-4">[% request.sender %]</td>
+                <td class="py-2 px-4">[% request.subject %]</td>
+                <td class="py-2 px-4">[% request.date %]</td>
+                <td class="py-2 px-4">[% request.state %]</td>
+                 <td class="py-2 px-4">
+                    <button onclick="openModal('[% request.body %]')" class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 flex" title="View Details">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        [% END %]
+    </tbody>
+</table>
 
-    Thanks a lot to them for their work.
-
-    See Ruby on Rails if you want a kickass framework in Ruby:
-    http://www.rubyonrails.org/
--->
-
-<div id="page">
-      <div id="sidebar">
-        <ul id="sidebar-items">
-          <li>
-            <h3>Join the community</h3>
-            <ul class="links">
-
-              <li><a href="https://perldancer.org/">PerlDancer Website</a></li>
-              <li><a href="https://twitter.com/PerlDancer/">Official Twitter</a></li>
-              <li><a href="https://github.com/PerlDancer/Dancer2/">GitHub Community</a></li>
-              <li><a href="https://lists.perldancer.org/mailman/listinfo/dancer-users">Mailing List</a></li>
-              <li><a href="irc://irc.perl.org/dancer">IRC</a></li>
-            </ul>
-          </li>
-
-          <li>
-            <h3>Browse the documentation</h3>
-
-            <ul class="links">
-              <li><a
-              href="https://metacpan.org/pod/Dancer2::Manual">Introduction</a></li>
-              <li><a href="https://metacpan.org/pod/Dancer2::Cookbook">Cookbook</a></li>
-              <li><a
-              href="https://metacpan.org/pod/Dancer2::Tutorial"
-              title="a tutorial to build a small blog engine with Dancer">Tutorial</a></li>
-              <li><a href="https://metacpan.org/pod/Dancer2::Manual::Deployment">Deployment</a></li>
-            </ul>
-          </li>
-
-          <li>
-            <h3>Your application's environment</h3>
-
-            <ul>
-                <li>Location: <span class="filepath">/home/dk/Documents/source/Perl/PerlAdminDashboard/src/Web</span></li>
-                <li>Template engine: <span class="app-info"><% settings.template %></span></li>
-                <li>Logger: <span class="app-info"><% settings.logger %></span></li>
-                <li>Environment: <span class="app-info"><% settings.environment %></span></li>
-            </ul>
-
-          </li>
-        </ul>
-
-      </div>
-
-      <div id="content">
-        <div id="header">
-          <h1>Perl is dancing</h1>
-          <h2>You&rsquo;ve joined the dance floor!</h2>
+<div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded shadow-lg p-5 w-11/12 md:w-1/2">
+        <h2 class="text-lg font-semibold mb-2">Request Details</h2>
+        <pre id="modalBody" class="whitespace-pre-wrap"></pre>
+        <div class="mt-4">
+            <button onclick="closeModal()" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">
+                Close
+            </button>
         </div>
-
-        <div id="getting-started">
-          <h1>Getting started</h1>
-          <h2>Here&rsquo;s how to get dancing:</h2>
-
-          <h3><a href="#" id="about_env_link">About your application's environment</a></h3>
-
-          <div id="about-content" style="display: none;">
-            <table>
-                <tbody>
-                <tr>
-                    <td>Perl version</td>
-                    <td><span class="app-info"><% perl_version %></span></td>
-                </tr>
-                <tr>
-                    <td>Dancer2 version</td>
-                    <td><span class="app-info"><% dancer_version %></span></td>
-                </tr>
-                <tr>
-                    <td>Backend</td>
-                    <td><span class="app-info"><% settings.apphandler %></span></td>
-                </tr>
-                <tr>
-                    <td>Appdir</td>
-                    <td><span class="filepath">/home/dk/Documents/source/Perl/PerlAdminDashboard/src/Web</span></td>
-                </tr>
-                <tr>
-                    <td>Template engine</td>
-                    <td><span class="app-info"><% settings.template %></span></td>
-                </tr>
-                <tr>
-                    <td>Logger engine</td>
-                    <td><span class="app-info"><% settings.logger %></span></td>
-                </tr>
-                <tr>
-                    <td>Running environment</td>
-                    <td><span class="app-info"><% settings.environment %></span></td>
-                </tr>
-                </tbody>
-            </table>
-          </div>
-
-    <script type="text/javascript">
-    $('#about_env_link').click(function() {
-        $('#about-content').slideToggle('fast', function() {
-            // ok
-        });
-        return false;
-    });
-    </script>
-
-
-          <ol>
-            <li>
-              <h2>Tune your application</h2>
-
-              <p>
-              Your application is configured via a global configuration file,
-              <span class="filepath">config.yml</span> and an "environment" configuration file,
-              <span class="filepath">environments/development.yml</span>. Edit those files if you
-              want to change the settings of your application.
-              </p>
-            </li>
-
-            <li>
-              <h2>Add your own routes</h2>
-
-              <p>
-              The default route that displays this page can be removed,
-              it's just here to help you get started. The template used to
-              generate this content is located in
-              <span class="filepath">views/index.tt</span>.
-              You can add some routes to <span class="filepath">lib/Web.pm</span>.
-              </p>
-            </li>
-
-            <li>
-              <h2>Enjoy web development again</h2>
-
-              <p>
-              Once you've made your changes, restart your standalone server
-              <span class="filepath">(bin/app.psgi)</span> and you're ready
-              to test your web application.
-              </p>
-            </li>
-
-          </ol>
-        </div>
-      </div>
     </div>
+</div>
+
+<script>
+function openModal(body) {
+    document.getElementById('modalBody').textContent = body;
+    document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.add('hidden'); // Hide the modal
+}
+</script>
+

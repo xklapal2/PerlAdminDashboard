@@ -7,6 +7,7 @@ use warnings;
 use Dancer2;
 use Dancer2::Plugin::Database;
 use URI;
+use Data::Dumper;    # For debugging
 
 # custom modules
 use PasswordHasher qw/hashPassword verifyPassword/;
@@ -19,22 +20,11 @@ our $VERSION = '0.1';
 ###                    Endpoints                 ###
 ####################################################
 
-get '/' => sub {
-    template 'index' => { 'title' => 'Web' };
-};
-
-get '/hash' => sub {
-    my $person = Person->new( name => 'Alice', age => 30 );
-    print $person->describe();
-
-    return hashPassword("secret");
-};
-
 # Home - Helpdesk
-get '/a' => sub {
+get '/' => sub {
     my @requests;
 
-    eval { @requests = [ database->quick_select( 'helpdeskRequests', {} ) ]; };
+    eval { @requests = database->quick_select( 'helpdeskRequests', {} ); };
 
     if ($@) {
         error "Failed to load helpdesk requests from database: $@";
@@ -44,11 +34,12 @@ get '/a' => sub {
           { errorMsg => "Failed to load helpeds requests." };
     }
 
-    if (@requests) {
-        return 'index', { requests => \@requests };
-    }
+    my $length = @requests;
 
-    return '<pre>No requests yet...</pre>';
+    return template 'index' => {
+        'title'    => 'Helpdesk',
+        'requests' => @requests ? \@requests : []
+    };
 };
 
 # Login page
@@ -59,7 +50,7 @@ get '/login' => sub {
     # Ensure the returnUrl is URI-encoded to handle special characters
     $returnUrl = URI->new($returnUrl)->as_string;
 
-    template 'login', { returnUrl => $returnUrl };
+    return template 'login', { returnUrl => $returnUrl };
 };
 
 # Handle login
@@ -137,17 +128,17 @@ get '/api/fetchEmails' => sub {
     return '<pre>' . $emailsJson . '</pre>';
 };
 
-hook before => sub {
-    my $currentPath = request->path;
+# hook before => sub {
+#     my $currentPath = request->path;
 
-    if ( !session('user') && $currentPath ne '/login' ) {
-        my $returnUrl = request->uri;
-        return redirect "/login?returnUrl=" . URI->new($returnUrl)->as_string;
-    }
+#     if ( !session('user') && $currentPath ne '/login' ) {
+#         my $returnUrl = request->uri;
+#         return redirect "/login?returnUrl=" . URI->new($returnUrl)->as_string;
+#     }
 
-    if ( session('user') && $currentPath eq '/login' ) {
-        return redirect "/";
-    }
-};
+#     if ( session('user') && $currentPath eq '/login' ) {
+#         return redirect "/";
+#     }
+# };
 
 true;

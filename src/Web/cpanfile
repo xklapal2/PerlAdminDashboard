@@ -17,11 +17,6 @@ requires "MIME::Parser"     => "0";
 requires "DateTime"                   => "0";
 requires "DateTime::Format::Strptime" => "0";
 
-# Required modules for ObjectOriented support for Perl
-requires "Moose"                 => "0";
-requires "MooseX::NonMoose"      => "0";
-requires "MooseX::MarkAsMethods" => "0";
-
 recommends "YAML"                    => "0";
 recommends "URL::Encode::XS"         => "0";
 recommends "CGI::Deurl::XS"          => "0";
