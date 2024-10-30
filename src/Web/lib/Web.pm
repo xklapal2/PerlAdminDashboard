@@ -10,6 +10,7 @@ use URI;
 use Data::Dumper;    # For debugging
 
 # custom modules
+use Entities::HelpdeskRequest;
 use PasswordHasher qw/hashPassword verifyPassword/;
 use EmailReader    qw/getEmails/;
 use Constants;
@@ -23,8 +24,12 @@ our $VERSION = '0.1';
 # Home - Helpdesk
 get '/' => sub {
     my @requests;
-
-    eval { @requests = database->quick_select( 'helpdeskRequests', {} ); };
+    eval {
+        my @requestsDictionaries =
+          database->quick_select( 'helpdeskRequests', {} );
+        @requests = map { Entities::HelpdeskRequest->fromDictionary($_) }
+          @requestsDictionaries;
+    };
 
     if ($@) {
         error "Failed to load helpdesk requests from database: $@";

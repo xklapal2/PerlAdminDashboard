@@ -75,13 +75,15 @@ sub createImapClient {
 sub processRawBody {
     my ($rawBody) = @_;
 
-    my $parser = MIME::Parser->new
-      ;   # Parse the email body (optional, use MIME::Parser for complex emails)
-    $parser->decode_bodies(1);    # Decode the bodies automatically
+    # Parse the email body (optional, use MIME::Parser for complex emails)
+    my $parser = MIME::Parser->new;
+    $parser->decode_bodies(1);
+
+    # Decode the bodies automatically
     my $entity = $parser->parse_data($rawBody);
 
-#print Dumper($entity);   # Print the entity for debugging (structure inspection)
-
+    # Print the entity for debugging (structure inspection)
+    # print Dumper($entity);
     my $body;
     if ( $entity->parts > 1 ) {
         $body = processMultiPartMessage( $entity->parts );
