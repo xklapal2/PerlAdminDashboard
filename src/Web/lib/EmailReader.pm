@@ -122,10 +122,10 @@ sub processMultiPartMessage {
 
     foreach my $part ($emailParts) {
         if ( $part->head->mime_type eq 'text/plain' ) {
-            my $body_handle = $part->bodyhandle;
-            my $content     = $body_handle->as_string;
+            my $bodyHandle = $part->bodyhandle;
+            my $content    = $bodyHandle->as_string;
 
-            removeParsedBodyFile($body_handle);
+            removeParsedBodyFile($bodyHandle);
 
             return $content;
         }

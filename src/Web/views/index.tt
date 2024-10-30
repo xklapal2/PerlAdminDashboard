@@ -1,4 +1,8 @@
-<h1 class="text-2xl mb-2">Helpdesk Requests</h1>
+
+<div class="flex justify-between">
+    <h1 class="text-2xl mb-2">Helpdesk Requests</h1>
+    <a href="/fetchEmails" class="bg-yellow-500 text-black py-1 px-3 rounded hover:bg-yellow-600">Refresh</a>
+</div>
 
     <table class="min-w-full bg-white border border-gray-200">
     <thead class="bg-gray-100">

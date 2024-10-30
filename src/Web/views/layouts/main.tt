@@ -35,7 +35,7 @@
 </header>
 
 
-    <main class="pt-20 container mx-auto px-4">
+    <main class="pt-20 container mx-auto px-4 mb-4">
       [% content %]
     </main>
 

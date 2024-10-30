@@ -35,6 +35,10 @@ sub bodyReplaceLineEndsWithBreaks {
     $htmlBody =~ s/\r\n?/\n/g;      # replace \r\n with \n
     $htmlBody =~ s/\n/<br \/>/g;    # replace \n with <br />
 
+    $htmlBody =~ s/\\/\\\\/g;       # Escape backslashes
+    $htmlBody =~ s/'/\\'/g;         # Escape single quotes
+    $htmlBody =~ s/"/\\"/g;         # Escape double quotes
+
     return $htmlBody;
 }
 

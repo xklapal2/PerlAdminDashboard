@@ -90,7 +90,7 @@ get '/config' => sub {
 };
 
 # Handle Fetch Emails
-get '/api/fetchEmails' => sub {
+get '/fetchEmails' => sub {
 
     my $emailConfig = config->{email};
 
@@ -113,7 +113,6 @@ get '/api/fetchEmails' => sub {
             );
 
             push @emailsToRemove, $email->{messageId};
-            print "mail inserted: $email->{subject} \n";
             debug "mail inserted: $email->{subject} \n";
         };
 
@@ -127,10 +126,7 @@ get '/api/fetchEmails' => sub {
 
     my $emailsJson = to_json( \@emails, { pretty => 1, canonical => 1 } );
 
-    status 200;
-
-    # return 'ok';
-    return '<pre>' . $emailsJson . '</pre>';
+    return redirect '/';
 };
 
 # hook before => sub {
