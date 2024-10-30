@@ -64,8 +64,62 @@ EOF
         echo "Running application $app..."
         DANCER_ENVIRONMENT=development plackup -r $app
         ;;
+    mail)
+        # Load username and password from the YAML file
+        yamlFile="environments/development.yml"
+        tmpMailFile="tmpMail.email"
+
+        smtpServer="smtp.fastmail.com"
+        username=$(yq -r '.email.username' $yamlFile)
+        password=$(yq -r '.email.password' $yamlFile)
+
+        to=$username
+        emailAddresses=(
+            "alice@example.com"
+            "bob@test.com"
+            "charlie@random.com"
+            "dave@fastmail.com"
+            "eve@mail.com"
+            "frank@example.com"
+            "grace@test.com"
+            "hank@random.com"
+            "ivy@fastmail.com"
+            "jack@mail.com"
+        )
+
+        # pick a random email address as the from address
+        from="${emailAddresses[RANDOM % ${#emailAddresses[@]}]}"
+
+        subject=$(curl -s https://catfact.ninja/fact?max_length=100)
+        subject=$(echo "$subject" | jq -r '.fact')
+
+        body=$(curl -s https://catfact.ninja/fact?max_length=500)
+        body=$(echo "$body" | jq -r '.fact')
+
+        {
+            echo "From: $from <$from>"
+            echo "To: <$to>"
+            echo "Subject: $subject"
+            echo "Content-Type: text/plain; charset=\"utf-8\""
+            echo
+            echo "$body"
+        } > $tmpMailFile
+
+        cat $tmpMailFile
+
+        # Send email using curl
+        curl --url "smtps://$smtpServer:465" \
+            -v \
+            --ssl-reqd \
+            --mail-from $from \
+            --mail-rcpt "$to" \
+            --user "$username:$password" \
+            -T $tmpMailFile
+
+        rm $tmpMailFile
+    ;;
     *)
-        echo "Invalid command. Available commands: db, dropdb, setdb, app"
+        echo "Invalid command. Available commands: db, dropdb, setdb, app, mail"
         exit 1
         ;;
 esac
