@@ -1,32 +1,36 @@
-
-<div class="flex justify-between">
-    <h1 class="text-2xl mb-2">Helpdesk Requests</h1>
-    <a href="/fetchEmails" class="bg-yellow-500 text-black py-1 px-3 rounded hover:bg-yellow-600">Refresh</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4">Helpdesk Requests</h1>
+    <a href="/fetchEmails" class="btn btn-warning" title="Refresh">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-recycle" viewBox="0 0 16 16">
+        <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.5.5 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244z"/>
+        </svg>
+    </a>
 </div>
 
-    <table class="min-w-full bg-white border border-gray-200">
-    <thead class="bg-gray-100">
-        <tr class="text-left text-gray-600 uppercase text-xs font-semibold border-b border-gray-200">
-            <th class="py-3 px-4">Message ID</th>
-            <th class="py-3 px-4">Sender</th>
-            <th class="py-3 px-4">Subject</th>
-            <th class="py-3 px-4">Date</th>
-            <th class="py-3 px-4">State</th>
-            <th class="py-3 px-4">Actions</th>
+<table class="table table-bordered table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>#</th>
+            <th>Sender</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>State</th>
+            <th>Actions</th>
         </tr>
     </thead>
-    <tbody class="text-gray-700">
+    <tbody>
         [% FOREACH request IN requests %]
-            <tr class="border-b hover:bg-gray-100">
-                <td class="py-2 px-4">[% request.messageId %]</td>
-                <td class="py-2 px-4">[% request.sender %]</td>
-                <td class="py-2 px-4">[% request.subject %]</td>
-                <td class="py-2 px-4">[% request.date %]</td>
-                <td class="py-2 px-4">[% request.state %]</td>
-                 <td class="py-2 px-4">
-                      <button onclick="openModal('[% request.bodyReplaceLineEndsWithBreaks %]')" class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 flex" title="View Details">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            <tr>
+                <td>[% request.messageId %]</td>
+                <td>[% request.sender %]</td>
+                <td>[% request.subject %]</td>
+                <td>[% request.date %]</td>
+                <td>[% request.state %]</td>
+                <td>
+                    <button type="button" title="View Details" class="btn btn-outline-info" onclick="openModal('[% request.bodyReplaceLineEndsWithBreaks %]')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+                        <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
                         </svg>
                     </button>
                 </td>
@@ -35,26 +39,28 @@
     </tbody>
 </table>
 
-<div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white rounded shadow-lg p-5 w-11/12 md:w-1/2">
-        <h2 class="text-lg font-semibold mb-2">Request Details</h2>
-        <pre id="modalBody" class="whitespace-pre-wrap"></pre>
-        <div class="mt-4">
-            <button onclick="closeModal()" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">
-                Close
-            </button>
-        </div>
+<div id="modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Request Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-function openModal(body) {
-    document.getElementById('modalBody').innerHTML = body;
-    document.getElementById('modal').classList.remove('hidden');
-}
+    function openModal(body) {
+        document.getElementById('modalBody').innerHTML = body;
+        $('#modal').modal('show');
+    }
 
-function closeModal() {
-    document.getElementById('modal').classList.add('hidden'); // Hide the modal
-}
+    function closeModal() {
+        $('#modal').modal('hide');
+    }
 </script>
-
