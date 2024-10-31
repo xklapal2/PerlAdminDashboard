@@ -3,6 +3,7 @@ package Entities::HelpdeskRequest;
 use strict;
 use warnings;
 use DBI;
+use HTML::Escape qw(escape_html);
 
 # constructor
 sub new {
@@ -30,6 +31,8 @@ sub fromDictionary {
 sub bodyReplaceLineEndsWithBreaks {
     my ($self) = @_;
     my $htmlBody = $self->{body};
+
+    $htmlBody = escape_html($htmlBody);
 
     # apply regex-replace
     $htmlBody =~ s/\r\n?/\n/g;      # replace \r\n with \n

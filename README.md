@@ -39,7 +39,7 @@ The web app includes several functionalities:
 
 - Frontend
 
-  - **HTML**, **JavaScript**, [**Tailwind**](https://tailwindcss.com/) (**CSS**)
+  - **HTML**, **JavaScript**, [**Bootstrap**](https://getbootstrap.com/) (**CSS**)
 
 
 ## Prerequisites:

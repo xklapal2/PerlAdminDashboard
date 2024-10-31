@@ -16,6 +16,7 @@ requires "MIME::Parser"     => "0";
 # Required modules for DateTimeParser.pm
 requires "DateTime"                   => "0";
 requires "DateTime::Format::Strptime" => "0";
+requires "HTML::Escape"               => "0";
 
 recommends "YAML"                    => "0";
 recommends "URL::Encode::XS"         => "0";

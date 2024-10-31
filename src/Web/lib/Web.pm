@@ -83,10 +83,8 @@ get '/monitoring' => sub {
 # Display config
 get '/config' => sub {
     my $config = config();
-    return
-        '<pre>'
-      . to_json( $config, { pretty => 1, canonical => 1 } )
-      . '</pre>';
+    return template 'config',
+      { config => to_json( $config, { pretty => 1, canonical => 1 } ) };
 };
 
 # Handle Fetch Emails

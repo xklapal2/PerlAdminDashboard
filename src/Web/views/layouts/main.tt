@@ -9,10 +9,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --color-o: #fca326;     /* orange */
+            --color-o-50: #fc6d26;   /* dark orange */
+            --color-o-100: #e24329;  /* darker orange */
+            --color-vio: #554488;   /* violet */
+            --color-vio-100: #222261;   /* dark violet */
+        }
+
+        .bg-o {
+            background-color: var(--color-o);
+        }
+
+        .bg-o-50 {
+            background-color: var(--color-o-50);
+        }
+
+        .bg-o-100 {
+            background-color: var(--color-o-100);
+        }
+
+        .bg-vio {
+            background-color: var(--color-vio);
+        }
+
+        .bg-vio-100 {
+            background-color: var(--color-vio-100);
+        }
+
+        /* Text Colors */
+        .text-o {
+            color: var(--color-o);
+        }
+
+        .text-o-50 {
+            color: var(--color-o-50);
+        }
+
+        .text-o-100 {
+            color: var(--color-o-100);
+        }
+
+        .text-vio {
+            color: var(--color-vio);
+        }
+
+        .text-vio-100 {
+            color: var(--color-vio-100);
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
-            color: #343a40;
         }
 
         header {
@@ -24,19 +71,6 @@
             color: white;
         }
 
-        .navbar {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-nav .nav-link {
-            color: #343a40;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #007bff;
-        }
-
         .content {
             padding-top: 80px; /* Space for the fixed navbar */
         }
@@ -45,38 +79,53 @@
             margin: 0;
             padding: 10px 0;
         }
+
+
     </style>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="bg-dark text-white d-flex flex-column min-vh-100">
 
-<header id="navbar" class="fixed-top bg-white">
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Helpdesk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/monitoring">Monitoring</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/config">Config</a>
-                    </li>
-                </ul>
-            </div>
+<header id="navbar" class="fixed-top bg-vio-100">
+    <nav class="navbar border-bottom border-body navbar-expand-sm" data-bs-theme="dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item mx-2">
+                <a class="nav-link" href="/">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16">
+                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+                        <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/>
+                    </svg> Helpdesk
+                </a>
+            </li>
+            <li class="nav-item mx-2">
+                <a class="nav-link" href="/monitoring">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07"/>
+                    </svg> Monitoring
+                </a>
+            </li>
+            <li class="nav-item mx-2">
+                <a class="nav-link" href="/config">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
+                    </svg> Config
+                </a>
+            </li>
+        </ul>
         </div>
+    </div>
     </nav>
 </header>
 
-<main class="content container mb-4">
+<main class="content container mb-4 flex-grow-1">
     [% content %]
 </main>
 
