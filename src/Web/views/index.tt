@@ -21,7 +21,7 @@
     <tbody>
         [% FOREACH request IN requests %]
             <tr>
-                <td>[% request.messageId %]</td>
+                <td>[% request.id %]</td>
                 <td>[% request.sender %]</td>
                 <td>[% request.subject %]</td>
                 <td>[% request.date %]</td>

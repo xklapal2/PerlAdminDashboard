@@ -47,46 +47,6 @@ get '/' => sub {
     };
 };
 
-# Login page
-get '/login' => sub {
-    my $returnUrl = query_parameters->get('returnUrl')
-      || '/';    # Default return URL if none provided
-
-    # Ensure the returnUrl is URI-encoded to handle special characters
-    $returnUrl = URI->new($returnUrl)->as_string;
-
-    return template 'login', { returnUrl => $returnUrl };
-};
-
-# Handle login
-post '/login' => sub {
-    my $username  = body_parameters->get('username');
-    my $password  = body_parameters->get('password');
-    my $returnUrl = body_parameters->get('returnUrl')
-      || '/';    # Default return URL if none provided
-
-    my $user = database->quick_select( 'users', { username => $username } );
-
-    if ( $user && verifyPassword( $user->{password}, $password ) ) {
-        session user => $user->{username};
-        return redirect $returnUrl;
-    }
-    else {
-        return template 'login', { returnUrl => $returnUrl, loginFailed => 1 };
-    }
-};
-
-get '/monitoring' => sub {
-    return template 'monitoring', {};
-};
-
-# Display config
-get '/config' => sub {
-    my $config = config();
-    return template 'config',
-      { config => to_json( $config, { pretty => 1, canonical => 1 } ) };
-};
-
 # Handle Fetch Emails
 get '/fetchEmails' => sub {
 
@@ -125,6 +85,46 @@ get '/fetchEmails' => sub {
     my $emailsJson = to_json( \@emails, { pretty => 1, canonical => 1 } );
 
     return redirect '/';
+};
+
+# Login page
+get '/login' => sub {
+    my $returnUrl = query_parameters->get('returnUrl')
+      || '/';    # Default return URL if none provided
+
+    # Ensure the returnUrl is URI-encoded to handle special characters
+    $returnUrl = URI->new($returnUrl)->as_string;
+
+    return template 'login', { returnUrl => $returnUrl };
+};
+
+# Handle login
+post '/login' => sub {
+    my $username  = body_parameters->get('username');
+    my $password  = body_parameters->get('password');
+    my $returnUrl = body_parameters->get('returnUrl')
+      || '/';    # Default return URL if none provided
+
+    my $user = database->quick_select( 'users', { username => $username } );
+
+    if ( $user && verifyPassword( $user->{password}, $password ) ) {
+        session user => $user->{username};
+        return redirect $returnUrl;
+    }
+    else {
+        return template 'login', { returnUrl => $returnUrl, loginFailed => 1 };
+    }
+};
+
+get '/monitoring' => sub {
+    return template 'monitoring', {};
+};
+
+# Display config
+get '/config' => sub {
+    my $config = config();
+    return template 'config',
+      { config => to_json( $config, { pretty => 1, canonical => 1 } ) };
 };
 
 # hook before => sub {
