@@ -3,7 +3,9 @@ package Entities::HelpdeskRequest;
 use strict;
 use warnings;
 use DBI;
+
 use HTML::Escape qw(escape_html);
+use Constants    qw($HelpdeskRequestStateNew);
 
 # constructor
 sub new {
@@ -16,7 +18,7 @@ sub new {
         subject   => $args{subject}   || '',
         body      => $args{body}      || '',
         date      => $args{date}      || '',
-        state     => $args{state}     || '',
+        progress  => $args{progress}  || $HelpdeskRequestStateNew,
     };
 
     bless $self, $class;
@@ -76,9 +78,9 @@ sub date {
     $_[0]->{date};
 }
 
-sub state {
-    $_[0]->{state} = $_[1] if defined $_[1];
-    $_[0]->{state};
+sub progress {
+    $_[0]->{progress} = $_[1] if defined $_[1];
+    $_[0]->{progress};
 }
 
 1;

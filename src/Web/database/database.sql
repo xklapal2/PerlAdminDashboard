@@ -16,5 +16,7 @@ CREATE TABLE IF NOT EXISTS helpdeskRequests (
     subject TEXT NOT NULL,
     body TEXT NOT NULL,
     date DATETIME NOT NULL,
-    state INTEGER DEFAULT 0
+    progress INTEGER DEFAULT 0
 );
+
+

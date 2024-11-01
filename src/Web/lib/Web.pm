@@ -13,7 +13,7 @@ use Data::Dumper;    # For debugging
 use Entities::HelpdeskRequest;
 use PasswordHasher qw/hashPassword verifyPassword/;
 use EmailReader    qw/getEmails/;
-use Constants;
+use Constants qw(%helpdeskRequestStates $HelpdeskRequestStateNew getStateLabel);
 
 our $VERSION = '0.1';
 
@@ -31,6 +31,7 @@ get '/' => sub {
           @requestsDictionaries;
     };
 
+    # print Dumper(@requests);
     if ($@) {
         error "Failed to load helpdesk requests from database: $@";
 
@@ -42,8 +43,9 @@ get '/' => sub {
     my $length = @requests;
 
     return template 'index' => {
-        'title'    => 'Helpdesk',
-        'requests' => @requests ? \@requests : []
+        'title'          => 'Helpdesk',
+        'requests'       => @requests ? \@requests : [],
+        'helpdeskStates' => \%helpdeskRequestStates,
     };
 };
 
@@ -66,7 +68,7 @@ get '/fetchEmails' => sub {
                     subject   => $email->{subject},
                     body      => $email->{body},
                     date      => $email->{date},
-                    state     => Constants::HelpdeskRequestStateNew
+                    progress  => $HelpdeskRequestStateNew
                 }
             );
 
@@ -85,6 +87,36 @@ get '/fetchEmails' => sub {
     my $emailsJson = to_json( \@emails, { pretty => 1, canonical => 1 } );
 
     return redirect '/';
+};
+
+post '/updateProgress' => sub {
+    my $data        = from_json( request->body );
+    my $id          = $data->{id};
+    my $newProgress = $data->{newProgress};
+    print "\n $newProgress \n";
+    my $label = getStateLabel($newProgress);
+    print "\n\n$label \n\n";
+
+    # Validate progress state
+    if ( !getStateLabel($newProgress) ) {
+        status 'bad_request';
+        return to_json { message => 'Invalid progress!' };
+    }
+
+    eval {
+        database->quick_update(
+            'helpdeskRequests',
+            { id       => $id },            # Where condition
+            { progress => $newProgress }    # Set values
+        );
+    };
+
+    if ($@) {
+        status 'internal_server_error';
+        return to_json { message => 'Oops... Something went wrong!' };
+    }
+
+    return to_json { status => 'Saved successfully.' };
 };
 
 # Login page
