@@ -93,11 +93,7 @@ post '/updateProgress' => sub {
     my $data        = from_json( request->body );
     my $id          = $data->{id};
     my $newProgress = $data->{newProgress};
-    print "\n $newProgress \n";
-    my $label = getStateLabel($newProgress);
-    print "\n\n$label \n\n";
 
-    # Validate progress state
     if ( !getStateLabel($newProgress) ) {
         status 'bad_request';
         return to_json { message => 'Invalid progress!' };

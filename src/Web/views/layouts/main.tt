@@ -83,6 +83,7 @@
 
     </style>
 
+    <script src="javascripts/site.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -127,6 +128,7 @@
 
 <main class="content container mb-4 flex-grow-1">
     [% content %]
+    <div id="alertPlaceholder" class="position-fixed bottom-0 start-50 translate-middle-x mb-3"></div>
 </main>
 
 <footer class="text-center">

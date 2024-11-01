@@ -96,7 +96,7 @@
             return response.json();
         })
         .then(data => {
-            alert(data.status || "Progress updated successfully");
+            triggerAlert('success', data.status);
         })
         .catch(error => {
             console.error("Error:", error);
