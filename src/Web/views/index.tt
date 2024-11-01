@@ -14,7 +14,7 @@
             <th>Sender</th>
             <th>Subject</th>
             <th>Date</th>
-            <th>State</th>
+            <th>Progress</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -30,7 +30,7 @@
                     <select onchange="submitProgress(this, [% request.id %])" class="form-control" data-bs-theme="dark" autocomplete="off">
                         [% FOREACH key IN helpdeskStates.keys %]
                             <option value="[% helpdeskStates.$key %]" [% IF helpdeskStates.$key == request.progress %]selected="true"[% END %]>
-                                [% key %] [% helpdeskStates.$key %] = [% request.progress %]
+                                [% key %]
                             </option>
                         [% END %]
                     </select>
