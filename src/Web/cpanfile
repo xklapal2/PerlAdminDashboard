@@ -31,6 +31,10 @@ recommends "MooX::TypeTiny"          => "0";
 recommends "Type::Tiny::XS"          => "0";
 recommends "Unicode::UTF8"           => "0";
 
+# client monitoring app requires
+recommends "Sys::Statistics::Linux" => "0";
+recommends "Proc::ProcessTable"     => "0";
+
 feature 'accelerate',
   'Accelerate Dancer2 app performance with XS modules' => sub {
     requires "URL::Encode::XS"         => "0";

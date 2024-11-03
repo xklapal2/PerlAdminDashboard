@@ -82,9 +82,7 @@ The web app includes several functionalities:
    sudo cpan DateTime DateTime::Format::Strptime
    ```
 
-   
-
-1. 
+1. Další zácislosti jsou uvedené v `cpanfile`.
 
 ## Sources
 
@@ -244,3 +242,21 @@ sqlite>  -- run SQL scripts from database.sql file
 sqlite> .exit -- exit
 ```
 
+## OOP
+
+### Classes
+
+#### $class
+
+When creating an instance
+
+```perl
+   my $object = ClassName->new(%args);
+```
+
+the ClassName is passed as the first argument to the new method, which is captured by `$class`.
+
+#### Bless
+
+- Purpose: The `bless` function is used to turn a `plain Perl hash reference` (or any reference) into an `object` by associating it with a class.
+- Explanation: The line `bless $self, $class;` takes the `hash reference $self` and associates it with the class named by `$class`. This allows `$self` to be treated as an `object of that class`, meaning you can call methods on it that are defined in the class.
