@@ -27,8 +27,8 @@ get '/' => sub {
     eval {
         my @requestsDictionaries =
           database->quick_select( 'helpdeskRequests', {} );
-        @requests = map { Entities::HelpdeskRequest->fromDictionary($_) }
-          @requestsDictionaries;
+        @requests =
+          map { Entities::HelpdeskRequest->new(%$_) } @requestsDictionaries;
     };
 
     # print Dumper(@requests);
@@ -36,17 +36,19 @@ get '/' => sub {
         error "Failed to load helpdesk requests from database: $@";
 
         # TODO: log $@
-        return template 'error',
+        return template('error'),
           { errorMsg => "Failed to load helpeds requests." };
     }
 
     my $length = @requests;
 
-    return template 'index' => {
-        'title'          => 'Helpdesk',
-        'requests'       => @requests ? \@requests : [],
-        'helpdeskStates' => \%helpdeskRequestStates,
-    };
+    return template(
+        'index' => {
+            'title'          => 'Helpdesk',
+            'requests'       => @requests ? \@requests : [],
+            'helpdeskStates' => \%helpdeskRequestStates,
+        }
+    );
 };
 
 # Handle Fetch Emails
@@ -72,7 +74,7 @@ get '/fetchEmails' => sub {
                 }
             );
 
-            push @emailsToRemove, $email->{messageId};
+            push( @emailsToRemove, $email->{messageId} );
             debug "mail inserted: $email->{subject} \n";
         };
 
@@ -123,7 +125,7 @@ get '/login' => sub {
     # Ensure the returnUrl is URI-encoded to handle special characters
     $returnUrl = URI->new($returnUrl)->as_string;
 
-    return template 'login', { returnUrl => $returnUrl };
+    return template( 'login', { returnUrl => $returnUrl } );
 };
 
 # Handle login
@@ -140,19 +142,20 @@ post '/login' => sub {
         return redirect $returnUrl;
     }
     else {
-        return template 'login', { returnUrl => $returnUrl, loginFailed => 1 };
+        return template( 'login',
+            { returnUrl => $returnUrl, loginFailed => 1 } );
     }
 };
 
 get '/monitoring' => sub {
-    return template 'monitoring', {};
+    return template( 'monitoring', {} );
 };
 
 # Display config
 get '/config' => sub {
-    my $config = config();
-    return template 'config',
-      { config => to_json( $config, { pretty => 1, canonical => 1 } ) };
+    my $jsonOptions = { pretty => 1, canonical => 1 };
+    my $config      = to_json( config(), $jsonOptions );
+    return template( 'config', { config => $config } );
 };
 
 # hook before => sub {
