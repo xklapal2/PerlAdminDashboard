@@ -37,6 +37,8 @@ recommends "Time::Piece" => "0";
 # client monitoring app requires
 recommends "Sys::Statistics::Linux" => "0";
 recommends "Proc::ProcessTable"     => "0";
+recommends "JSON"                   => "0";
+recommends "LWP::UserAgent"         => "0";
 
 feature 'accelerate',
   'Accelerate Dancer2 app performance with XS modules' => sub {

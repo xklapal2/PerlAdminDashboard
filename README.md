@@ -242,7 +242,9 @@ sqlite>  -- run SQL scripts from database.sql file
 sqlite> .exit -- exit
 ```
 
-## OOP
+# Perl Notes
+
+## Perl - OOP
 
 ### Classes
 
@@ -260,3 +262,12 @@ the ClassName is passed as the first argument to the new method, which is captur
 
 - Purpose: The `bless` function is used to turn a `plain Perl hash reference` (or any reference) into an `object` by associating it with a class.
 - Explanation: The line `bless $self, $class;` takes the `hash reference $self` and associates it with the class named by `$class`. This allows `$self` to be treated as an `object of that class`, meaning you can call methods on it that are defined in the class.
+
+### Access methods and calls
+
+```perl
+x->something: # For calling a method or accessing an attribute of an object.
+x->{something}: # For accessing values in a hash reference.
+x{'something'}: # For accessing values in a regular hash.
+x[something]: # For accessing elements in an array or using an index with an array reference as x->[index].
+```

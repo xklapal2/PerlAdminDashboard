@@ -25,5 +25,6 @@ CREATE TABLE IF NOT EXISTS monitoringClient (
     uptime TEXT NOT NULL,
     cpuCount INTEGER NOT NULL,
     memoryCapacity REAL NOT NULL,
+    clientTimestamp DATETIME NOT NULL,
     lastConnectionTime DATETIME NOT NULL
 );

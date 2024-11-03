@@ -118,6 +118,9 @@ EOF
 
         rm $tmpMailFile
     ;;
+    client)
+    perl bin/ResourceMonitoringClient.pl
+    ;;
     *)
         echo "Invalid command. Available commands: db, dropdb, setdb, app, mail"
         exit 1
