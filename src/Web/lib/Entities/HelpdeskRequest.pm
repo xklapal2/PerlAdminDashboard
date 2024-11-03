@@ -2,7 +2,6 @@ package Entities::HelpdeskRequest;
 
 use strict;
 use warnings;
-use DBI;
 
 use HTML::Escape qw(escape_html);
 use Constants    qw($HelpdeskRequestStateNew);
@@ -21,13 +20,8 @@ sub new {
         progress  => $args{progress}  || $HelpdeskRequestStateNew,
     };
 
-    bless $self, $class;
+    bless $self, $class; # bless explained in readme.md: OOP -> Classes -> Bless
     return $self;
-}
-
-sub fromDictionary {
-    my ( $class, $dict ) = @_;
-    return $class->new(%$dict);
 }
 
 sub bodyReplaceLineEndsWithBreaks {
