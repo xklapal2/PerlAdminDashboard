@@ -19,7 +19,6 @@
         </tr>
     </thead>
     <tbody>
-                    <form action="/updateTaskState" method="post"> </form>
         [% FOREACH request IN requests %]
             <tr>
                 <td>[% request.id %]</td>

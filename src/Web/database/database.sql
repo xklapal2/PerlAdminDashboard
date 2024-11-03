@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS helpdeskRequests (
     progress INTEGER DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS monitoringClient (
+CREATE TABLE IF NOT EXISTS monitoringClients (
     hostname TEXT PRIMARY KEY,
     version TEXT NOT NULL,
     uptime TEXT NOT NULL,

@@ -8,6 +8,7 @@ use Dancer2;
 use Dancer2::Plugin::Database;
 use URI;
 use Data::Dumper;    # For debugging
+use Time::Piece;
 
 # custom modules
 use Entities::HelpdeskRequest;
@@ -40,8 +41,6 @@ get '/' => sub {
         return template( 'error',
             { errorMsg => "Failed to load helpeds requests." } );
     }
-
-    my $length = @requests;
 
     return template(
         'index' => {
@@ -152,7 +151,25 @@ post '/login' => sub {
 };
 
 get '/monitoring' => sub {
-    return template( 'monitoring', {} );
+    my @clients;
+    eval {
+        my @dbClients = database->quick_select( 'monitoringClients', {} );
+        @clients =
+          map { Entities::MonitoringClientInfo->new(%$_) } @dbClients;
+    };
+
+    # print Dumper(@clients);
+    if ($@) {
+        error "Failed to load clients from database: $@";
+        return template( 'error', { errorMsg => "Failed to load clients." } );
+    }
+
+    return template(
+        'monitoring' => {
+            'title'   => 'MonitoringClients',
+            'clients' => @clients ? \@clients : []
+        }
+    );
 };
 
 post '/monitoring/register' => sub {
@@ -161,21 +178,32 @@ post '/monitoring/register' => sub {
         my $body = request->body;
         my $registration =
           Entities::MonitoringClientInfo->new( decode_json( request->body ) );
-        print "$registration\n";
 
-        my $client = database->quick_select( 'monitoringClient',
+        my $client = database->quick_select( 'monitoringClients',
             { hostname => $registration->hostname } );
-        print "OK DB \n";
 
         if ($client) {
+
             database->quick_update(
-                'monitoringClient',
+                'monitoringClients',
                 { hostname => $client->{hostname} },
                 $client->update($registration)
             );
+            print "NOK\n";
         }
         else {
-            database->quick_insert( 'monitoringClient', $registration );
+            database->quick_insert(
+                'monitoringClients',
+                {
+                    hostname           => $registration->{hostname},
+                    version            => $registration->{version},
+                    uptime             => $registration->{uptime},
+                    cpuCount           => $registration->{cpuCount},
+                    memoryCapacity     => $registration->{memoryCapacity},
+                    clientTimestamp    => $registration->{clientTimestamp},
+                    lastConnectionTime => localtime->datetime
+                }
+            );
         }
     };
 
