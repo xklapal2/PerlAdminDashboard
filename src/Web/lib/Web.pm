@@ -36,8 +36,8 @@ get '/' => sub {
         error "Failed to load helpdesk requests from database: $@";
 
         # TODO: log $@
-        return template('error'),
-          { errorMsg => "Failed to load helpeds requests." };
+        return template( 'error',
+            { errorMsg => "Failed to load helpeds requests." } );
     }
 
     my $length = @requests;
@@ -78,6 +78,9 @@ get '/fetchEmails' => sub {
             debug "mail inserted: $email->{subject} \n";
         };
 
+# TODO : From email remove all @emailsToRemove
+# TODO : EmailReader module : Fix bug - Delete all files which are created during reading inbox.
+
         if ($@) {
             error
 "Failed to insert email to database: date: $email->{date}, sender: $email->{sender}";
@@ -88,7 +91,7 @@ get '/fetchEmails' => sub {
 
     my $emailsJson = to_json( \@emails, { pretty => 1, canonical => 1 } );
 
-    return redirect '/';
+    return redirect('/');
 };
 
 post '/updateProgress' => sub {
@@ -98,7 +101,7 @@ post '/updateProgress' => sub {
 
     if ( !getStateLabel($newProgress) ) {
         status 'bad_request';
-        return to_json { message => 'Invalid progress!' };
+        return to_json( { message => 'Invalid progress!' } );
     }
 
     eval {
@@ -111,10 +114,10 @@ post '/updateProgress' => sub {
 
     if ($@) {
         status 'internal_server_error';
-        return to_json { message => 'Oops... Something went wrong!' };
+        return to_json( { message => 'Oops... Something went wrong!' } );
     }
 
-    return to_json { status => 'Saved successfully.' };
+    return to_json( { status => 'Saved successfully.' } );
 };
 
 # Login page
@@ -139,7 +142,7 @@ post '/login' => sub {
 
     if ( $user && verifyPassword( $user->{password}, $password ) ) {
         session user => $user->{username};
-        return redirect $returnUrl;
+        return redirect($returnUrl);
     }
     else {
         return template( 'login',
@@ -149,6 +152,35 @@ post '/login' => sub {
 
 get '/monitoring' => sub {
     return template( 'monitoring', {} );
+};
+
+post '/monitoring/register' => sub {
+
+    eval {
+        my $registration =
+          MonitoringClientInfo->new( decode_json( request->body ) );
+
+        my $client = database->quick_select( 'monitoringClient',
+            { hostname => $registration->hostname } );
+
+        if ($client) {
+            database->quick_update(
+                'monitoringClient',
+                { hostname => $client->{hostname} },
+                $client->update($registration)
+            );
+        }
+        else {
+            database->quick_insert( 'monitoringClient', $registration );
+        }
+    };
+
+    if ($@) {
+        status 'internal_server_error';
+        return to_json( { message => 'Oops... Something went wrong!' } );
+    }
+
+    return to_json( { status => 'Ok' } );
 };
 
 # Display config

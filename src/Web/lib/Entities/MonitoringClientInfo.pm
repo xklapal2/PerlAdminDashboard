@@ -4,21 +4,42 @@ use strict;
 use warnings;
 
 use HTML::Escape qw(escape_html);
+use Time::Piece;
 
 sub new {
     my ( $class, %args ) = @_;
 
     my $self = {
-        id        => $args{id}        || 0,
-        hostname  => $args{hostname}  || '',
-        version   => $args{version}   || '',
-        uptime    => $args{uptime}    || '',
-        tcpucount => $args{tcpucount} || 0,
-        memtotal  => $args{memtotal}  || 0,
+        hostname           => $args{hostname}           || '',
+        version            => $args{version}            || '',
+        uptime             => $args{uptime}             || '',
+        cpuCount           => $args{cpuCount}           || 0,
+        memoryCapacity     => $args{memoryCapacity}     || 0,
+        lastConnectionTime => $args{lastConnectionTime} || '',
     };
 
     bless $self, $class; # bless explained in readme.md: OOP -> Classes -> Bless
     return $self;
+}
+
+sub getters {
+    return qw(version uptime cpuCount memoryCapacity);
+}
+
+sub update {
+    my ( $self, $newInfo ) = @_;
+    my %updatedAttributes;
+
+    for my $key ( $newInfo->getters() ) {
+        if ( $self->$key ne $newInfo->$key ) {
+            $updatedAttributes{$key} = $newInfo->$key;
+        }
+    }
+
+    my $currentTime = localtime->datetime;    # Format: YYYY-MM-DDTHH:MM:SS
+    $updatedAttributes{'lastConnectionTime'} = $currentTime;
+
+    return %updatedAttributes;
 }
 
 # getters and setters
@@ -37,13 +58,18 @@ sub uptime {
     $_[0]->{uptime};
 }
 
-sub tcpucount {
-    $_[0]->{tcpucount} = $_[1] if defined $_[1];
-    $_[0]->{tcpucount};
+sub cpuCount {
+    $_[0]->{cpuCount} = $_[1] if defined $_[1];
+    $_[0]->{cpuCount};
 }
 
-sub memtotal {
-    $_[0]->{memtotal} = $_[1] if defined $_[1];
-    $_[0]->{memtotal};
+sub memoryCapacity {
+    $_[0]->{memoryCapacity} = $_[1] if defined $_[1];
+    $_[0]->{memoryCapacity};
+}
+
+sub lastConnectionTime {
+    $_[0]->{lastConnectionTime} = $_[1] if defined $_[1];
+    $_[0]->{lastConnectionTime};
 }
 
