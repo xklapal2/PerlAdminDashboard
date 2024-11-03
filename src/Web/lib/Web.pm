@@ -11,6 +11,7 @@ use Data::Dumper;    # For debugging
 
 # custom modules
 use Entities::HelpdeskRequest;
+use Entities::MonitoringClientInfo;
 use PasswordHasher qw/hashPassword verifyPassword/;
 use EmailReader    qw/getEmails/;
 use Constants qw(%helpdeskRequestStates $HelpdeskRequestStateNew getStateLabel);
@@ -157,11 +158,14 @@ get '/monitoring' => sub {
 post '/monitoring/register' => sub {
 
     eval {
+        my $body = request->body;
         my $registration =
-          MonitoringClientInfo->new( decode_json( request->body ) );
+          Entities::MonitoringClientInfo->new( decode_json( request->body ) );
+        print "$registration\n";
 
         my $client = database->quick_select( 'monitoringClient',
             { hostname => $registration->hostname } );
+        print "OK DB \n";
 
         if ($client) {
             database->quick_update(
@@ -176,6 +180,7 @@ post '/monitoring/register' => sub {
     };
 
     if ($@) {
+        print "Error: $@";
         status 'internal_server_error';
         return to_json( { message => 'Oops... Something went wrong!' } );
     }

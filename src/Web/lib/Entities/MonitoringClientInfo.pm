@@ -1,4 +1,4 @@
-package MonitoringClientInfo;
+package Entities::MonitoringClientInfo;
 
 use strict;
 use warnings;
@@ -15,6 +15,7 @@ sub new {
         uptime             => $args{uptime}             || '',
         cpuCount           => $args{cpuCount}           || 0,
         memoryCapacity     => $args{memoryCapacity}     || 0,
+        clientTimestamp    => $args{clientTimestamp}    || '',
         lastConnectionTime => $args{lastConnectionTime} || '',
     };
 
@@ -23,7 +24,7 @@ sub new {
 }
 
 sub getters {
-    return qw(version uptime cpuCount memoryCapacity);
+    return qw(version uptime cpuCount memoryCapacity clientTimestamp);
 }
 
 sub update {
@@ -68,8 +69,14 @@ sub memoryCapacity {
     $_[0]->{memoryCapacity};
 }
 
+sub clientTimestamp {
+    $_[0]->{clientTimestamp} = $_[1] if defined $_[1];
+    $_[0]->{clientTimestamp};
+}
+
 sub lastConnectionTime {
     $_[0]->{lastConnectionTime} = $_[1] if defined $_[1];
     $_[0]->{lastConnectionTime};
 }
 
+1;
