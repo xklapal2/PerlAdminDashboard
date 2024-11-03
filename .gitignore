@@ -1,2 +1,5 @@
 src/API/database/AdminDashboard.db
 **/**/.vstags
+src/TBD.txt
+src/Web/database/AdminDashboard.db
+src/Web/environments/development.yml
