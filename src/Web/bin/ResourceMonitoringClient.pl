@@ -12,80 +12,78 @@ my $ua  = LWP::UserAgent->new;
 my $url = 'http://localhost:5000/monitoring/register';
 
 my $lxs = Sys::Statistics::Linux->new(
-    sysinfo   => 1,
-    cpustats  => 1,
-    memstats  => 0,
-    processes => 0,
+	sysinfo   => 1,
+	cpustats  => 1,
+	memstats  => 0,
+	processes => 0,
 
-    procstats => 0,
-    pgswstats => 0,
-    netstats  => 0,
-    sockstats => 0,
-    diskstats => 0,
-    diskusage => 0,
-    loadavg   => 0,
-    filestats => 0,
+	procstats => 0,
+	pgswstats => 0,
+	netstats  => 0,
+	sockstats => 0,
+	diskstats => 0,
+	diskusage => 0,
+	loadavg   => 0,
+	filestats => 0,
 );
 $lxs->init;
 
+
 sub memtotalToGigabytes {
-    my ($memtotalStr) = @_;
+	my ($memtotalStr) = @_;
 
-    # Removes any non-digit characters
-    $memtotalStr =~ s/\D//g;
+	# Removes any non-digit characters
+	$memtotalStr =~ s/\D//g;
 
-    # Forces numeric context
-    my $memtotalInt = $memtotalStr + 0;
+	# Forces numeric context
+	my $memtotalInt = $memtotalStr + 0;
 
-    # Convert kilobytes to gigabytes
-    return $memtotalInt / ( 1024 * 1024 );
+	# Convert kilobytes to gigabytes
+	return $memtotalInt / ( 1024 * 1024 );
 }
+
 
 sub createRegistrationData {
-    my ($lxs) = @_;
+	my ($lxs) = @_;
 
-    my $stat = $lxs->get;
-    $sysInfo = $stat->sysinfo();
+	my $stat = $lxs->get;
+	$sysInfo = $stat->sysinfo();
 
-    $uptime          = $sysInfo->{uptime};
-    $tcpucount       = $sysInfo->{tcpucount};
-    $memtotal        = memtotalToGigabytes( $sysInfo->{memtotal} );
-    $version         = $sysInfo->{version};
-    $hostname        = $sysInfo->{hostname};
-    $clientTimestamp = localtime->datetime;    # Format: YYYY-MM-DDTHH:MM:SS
+	$uptime          = $sysInfo->{uptime};
+	$tcpucount       = $sysInfo->{tcpucount};
+	$memtotal        = memtotalToGigabytes( $sysInfo->{memtotal} );
+	$version         = $sysInfo->{version};
+	$hostname        = $sysInfo->{hostname};
+	$clientTimestamp = localtime->datetime;    # Format: YYYY-MM-DDTHH:MM:SS
 
-    return {
-        hostname        => $hostname,
-        version         => $version,
-        uptime          => $uptime,
-        cpuCount        => $tcpucount,
-        memoryCapacity  => $memtotal,
-        clientTimestamp => $clientTimestamp,
-    };
+	return {
+		hostname        => $hostname,
+		version         => $version,
+		uptime          => $uptime,
+		cpuCount        => $tcpucount,
+		memoryCapacity  => $memtotal,
+		clientTimestamp => $clientTimestamp,
+	};
 }
 
+
 sub register {
-    my ($lxs) = @_;
-    my $registrationJson = encode_json( createRegistrationData($lxs) );
+	my ($lxs) = @_;
+	my $registrationJson = encode_json( createRegistrationData($lxs) );
 
-    my $request = HTTP::Request->new( POST => $url );
-    $request->header( 'Content-Type' => 'application/json' );
-    $request->content($registrationJson);
+	my $request = HTTP::Request->new( POST => $url );
+	$request->header( 'Content-Type' => 'application/json' );
+	$request->content($registrationJson);
 
-    # Send the request
-    my $response = $ua->request($request);
+	# Send the request
+	my $response = $ua->request($request);
 
-    # Check the response
-    if ( $response->is_success ) {
-        print "Response: "
-          . $response->decoded_content;    # Print the response content
-    }
-    else {
-        die "HTTP POST error code: "
-          . $response->code . "\n"
-          . "HTTP POST error message: "
-          . $response->message . "\n";
-    }
+	# Check the response
+	if ( $response->is_success ) {
+		print "Response: ". $response->decoded_content;    # Print the response content
+	}else {
+		die "HTTP POST error code: ". $response->code . "\n". "HTTP POST error message: ". $response->message . "\n";
+	}
 }
 
 register($lxs);
