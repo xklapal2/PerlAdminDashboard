@@ -27,7 +27,7 @@ our $VERSION = '0.1';
 get '/' => sub {
 	my @requests;
 	eval {
-		my @requestsDictionaries =database->quick_select( 'helpdeskRequests', {} );
+		my @requestsDictionaries = database->quick_select( 'helpdeskRequests', {} );
 		@requests =map { Entities::HelpdeskRequest->new(%$_) } @requestsDictionaries;
 	};
 
@@ -52,9 +52,7 @@ get '/' => sub {
 get '/fetchEmails' => sub {
 
 	my $emailConfig = config->{email};
-
 	my @emails = getEmails($emailConfig);
-
 	my @emailsToRemove = [];
 
 	foreach my $email (@emails) {
@@ -176,10 +174,9 @@ post '/monitoring/register' => sub {
 		my $client = database->quick_select( 'monitoringClients',{ hostname => $registration->hostname } );
 
 		if ($client) {
-
-			database->quick_update('monitoringClients',{ hostname => $client->{hostname} },$client->update($registration));
-			print "NOK\n";
-		}else {
+			my $clientBlessed = Entities::MonitoringClientInfo->new( %{ $client } );
+			database->quick_update('monitoringClients', { hostname => $clientBlessed->{hostname} }, $clientBlessed->update($registration));
+		} else {
 			database->quick_insert(
 				'monitoringClients',
 				{
