@@ -154,8 +154,7 @@ get '/monitoring' => sub {
     my @clients;
     eval {
         my @dbClients = database->quick_select( 'monitoringClients', {} );
-        @clients =
-          map { Entities::MonitoringClientInfo->new(%$_) } @dbClients;
+        @clients = map { Entities::MonitoringClientInfo->new(%$_) } @dbClients;
     };
 
     # print Dumper(@clients);
@@ -176,8 +175,10 @@ post '/monitoring/register' => sub {
 
     eval {
         my $body = request->body;
-        my $registration =
-          Entities::MonitoringClientInfo->new( decode_json( request->body ) );
+
+# Decode JSON returns hashReference and constructor requires direct accesss to hash
+        my $registration = Entities::MonitoringClientInfo->new(
+            %{ decode_json( request->body ) } );
 
         my $client = database->quick_select( 'monitoringClients',
             { hostname => $registration->hostname } );
