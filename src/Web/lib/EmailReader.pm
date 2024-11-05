@@ -8,7 +8,7 @@ use IO::Socket::SSL;
 use MIME::Parser;
 use Data::Dumper;    # For debugging
 
-use DateTimeParser qw/parseEmailDateTime/;
+use DateTimeHelper qw/parseEmailDateTime/;
 
 use Exporter 'import';             # Import the Exporter module
 our @EXPORT_OK = qw(getEmails);    # Functions to export
@@ -20,11 +20,12 @@ sub getEmails {
 	my $imap = createImapClient($emailConfig);
 
 	if ( !$imap ) {
-		die "Unable to connect to IMAP server: $@\n";
+		print "Unable to connect to IMAP server: $@\n";
+		return undef;
 	}
 
-	$imap->select('INBOX')
-	  or die "Unable to select INBOX: $@\n";    # Open INBOX folder
+	# Unable to select INBOX
+	$imap->select('INBOX') or return undef;    # Open INBOX folder
 
 	# Search for all messages in the inbox
 	my @messages = $imap->search('ALL') or die "Search failed: $@\n";
@@ -32,9 +33,6 @@ sub getEmails {
 	my @emails;
 
 	foreach my $messageId (@messages) {
-
-		print "\n\nMSG_ID: $messageId\n\n";
-
 		my $rawBody = $imap->message_string($messageId);    # Get body raw
 
 		my $body = processRawBody($rawBody);

@@ -15,6 +15,7 @@ use Entities::HelpdeskRequest;
 use Entities::MonitoringClientInfo;
 use PasswordHasher qw/hashPassword verifyPassword/;
 use EmailReader    qw/getEmails/;
+use DateTimeHelper ("formatDate");
 use Constants qw(%helpdeskRequestStates $HelpdeskRequestStateNew getStateLabel);
 
 our $VERSION = '0.1';
@@ -44,6 +45,7 @@ get '/' => sub {
 			'title'          => 'Helpdesk',
 			'requests'       => @requests ? \@requests : [],
 			'helpdeskStates' => \%helpdeskRequestStates,
+			"formatDate" => \&formatDate
 		}
 	);
 };
@@ -158,7 +160,8 @@ get '/monitoring' => sub {
 	return template(
 		'monitoring' => {
 			'title'   => 'MonitoringClients',
-			'clients' => @clients ? \@clients : []
+			'clients' => @clients ? \@clients : [],
+			"formatDate" => \&formatDate
 		}
 	);
 };
@@ -181,11 +184,10 @@ post '/monitoring/register' => sub {
 				'monitoringClients',
 				{
 					hostname           => $registration->{hostname},
+					kernel             => $registration->{kernel},
 					version            => $registration->{version},
 					uptime             => $registration->{uptime},
-					cpuCount           => $registration->{cpuCount},
 					memoryCapacity     => $registration->{memoryCapacity},
-					clientTimestamp    => $registration->{clientTimestamp},
 					lastConnectionTime => localtime->datetime
 				}
 			);
@@ -209,16 +211,16 @@ get '/config' => sub {
 };
 
 # hook before => sub {
-#     my $currentPath = request->path;
+# 	my $currentPath = request->path;
 
-#     if ( !session('user') && $currentPath ne '/login' ) {
-#         my $returnUrl = request->uri;
-#         return redirect "/login?returnUrl=" . URI->new($returnUrl)->as_string;
-#     }
+# 	if ( !session('user') && $currentPath ne '/login' ) {
+# 		my $returnUrl = request->uri;
+# 		return redirect "/login?returnUrl=" . URI->new($returnUrl)->as_string;
+# 	}
 
-#     if ( session('user') && $currentPath eq '/login' ) {
-#         return redirect "/";
-#     }
+# 	if ( session('user') && $currentPath eq '/login' ) {
+# 		return redirect "/";
+# 	}
 # };
 
 true;

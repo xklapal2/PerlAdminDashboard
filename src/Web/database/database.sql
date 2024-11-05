@@ -21,10 +21,9 @@ CREATE TABLE IF NOT EXISTS helpdeskRequests (
 
 CREATE TABLE IF NOT EXISTS monitoringClients (
     hostname TEXT PRIMARY KEY,
+    kernel TEXT NOT NULL,
     version TEXT NOT NULL,
     uptime TEXT NOT NULL,
-    cpuCount INTEGER NOT NULL,
     memoryCapacity REAL NOT NULL,
-    clientTimestamp DATETIME NOT NULL,
     lastConnectionTime DATETIME NOT NULL
 );

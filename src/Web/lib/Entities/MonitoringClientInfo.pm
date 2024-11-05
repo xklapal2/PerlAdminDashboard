@@ -12,11 +12,10 @@ sub new {
 
 	my $self = {
 		hostname           => $args{hostname}           || '',
+		kernel 			   => $args{kernel} 			|| '',
 		version            => $args{version}            || '',
 		uptime             => $args{uptime}             || '',
-		cpuCount           => $args{cpuCount}           || 0,
 		memoryCapacity     => $args{memoryCapacity}     || 0,
-		clientTimestamp    => $args{clientTimestamp}    || '',
 		lastConnectionTime => $args{lastConnectionTime} || '',
 	};
 
@@ -26,7 +25,7 @@ sub new {
 
 
 sub getters {
-	return qw(version uptime cpuCount memoryCapacity clientTimestamp);
+	return qw(version uptime memoryCapacity kernel);
 }
 
 
@@ -65,27 +64,21 @@ sub uptime {
 }
 
 
-sub cpuCount {
-	$_[0]->{cpuCount} = $_[1] if defined $_[1];
-	$_[0]->{cpuCount};
-}
-
-
 sub memoryCapacity {
 	$_[0]->{memoryCapacity} = $_[1] if defined $_[1];
 	$_[0]->{memoryCapacity};
 }
 
 
-sub clientTimestamp {
-	$_[0]->{clientTimestamp} = $_[1] if defined $_[1];
-	$_[0]->{clientTimestamp};
-}
-
-
 sub lastConnectionTime {
 	$_[0]->{lastConnectionTime} = $_[1] if defined $_[1];
 	$_[0]->{lastConnectionTime};
+}
+
+
+sub kernel {
+	$_[0]->{kernel} = $_[1] if defined $_[1];
+	$_[0]->{kernel};
 }
 
 1;

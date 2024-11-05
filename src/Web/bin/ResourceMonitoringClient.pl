@@ -38,8 +38,8 @@ sub memtotalToGigabytes {
 	# Forces numeric context
 	my $memtotalInt = $memtotalStr + 0;
 
-	# Convert kilobytes to gigabytes
-	return $memtotalInt / ( 1024 * 1024 );
+	# Convert kilobytes to gigabytes and round to two decimal places
+	return sprintf("%.2f", $memtotalInt / ( 1024 * 1024 ));
 }
 
 
@@ -49,20 +49,20 @@ sub createRegistrationData {
 	my $stat = $lxs->get;
 	$sysInfo = $stat->sysinfo();
 
+	print Dumper($stat);
+
 	$uptime          = $sysInfo->{uptime};
-	$tcpucount       = $sysInfo->{tcpucount};
 	$memtotal        = memtotalToGigabytes( $sysInfo->{memtotal} );
 	$version         = $sysInfo->{version};
 	$hostname        = $sysInfo->{hostname};
-	$clientTimestamp = localtime->datetime;    # Format: YYYY-MM-DDTHH:MM:SS
+	$kernel 		 = $sysInfo->{kernel};
 
 	return {
 		hostname        => $hostname,
 		version         => $version,
 		uptime          => $uptime,
-		cpuCount        => $tcpucount,
 		memoryCapacity  => $memtotal,
-		clientTimestamp => $clientTimestamp,
+		kernel 			=> $kernel,
 	};
 }
 
