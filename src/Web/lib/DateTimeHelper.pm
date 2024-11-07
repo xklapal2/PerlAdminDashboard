@@ -15,12 +15,13 @@ our @EXPORT_OK = ("parseEmailDateTime", "formatDate");    # Functions to export
 # Returns: datetime in format: YYYY-MM-DD HH:MM:SS
 sub parseEmailDateTime {
 	my ($datetimeString) = @_;
+	print "Parsing $datetimeString \n";
 
 	# Create a Strptime formatter for the given format
 	my $strp = DateTime::Format::Strptime->new(
 		pattern  => '%a, %d %b %Y %H:%M:%S %z',
 		locale   => 'en_US',
-		on_error => 'return',
+		on_error => 'croak',
 	);
 
 	my $dt = $strp->parse_datetime($datetimeString);
