@@ -44,6 +44,26 @@ The web app includes several functionalities:
 
 ## Prerequisites:
 
+
+```bash
+# install curl
+sudo apt install curl
+
+# install perl
+sudo curl -L http://xrl.us/installperlnix | bash
+
+# install sql lite
+sudo apt install sqlite3
+
+# Web Framework
+cpan isntall Dancer2
+# requires
+cpan install DBI DBD::SQLite Dancer2::Plugin::Database Crypt::Argon2 MIME::Base64 Crypt::URandom Mail::IMAPClient IO::Socket::SSL MIME::Parser DateTime DateTime::Format::Strptime DateTime::Format::ISO8601 HTML::Escape Time::Piece Sys::Statistics::Linux Proc::ProcessTable JSON LWP::UserAgent Plack::App::WebSocket AnyEvent::WebSocket::Client
+# recomends
+cpan install YAML URL::Encode::XS CGI::Deurl::XS CBOR::XS YAML::XS Class::XSAccessor HTTP::XSCookies HTTP::XSHeaders Math::Random::ISAAC::XS MooX::TypeTiny Type::Tiny::XS Unicode::UTF8cpan install DBI DBD::SQLite Dancer2::Plugin::Database Crypt::Argon2 MIME::Base64 Crypt::URandom Mail::IMAPClient IO::Socket::SSL MIME::Parser DateTime DateTime::Format::Strptime DateTime::Format::ISO8601 HTML::Escape Time::Piece Sys::Statistics::Linux Proc::ProcessTable JSON LWP::UserAgent Plack::App::WebSocket AnyEvent::WebSocket::Client
+```
+
+
 1. Install `Perl`
 1. Install `Perl module manager`
 
