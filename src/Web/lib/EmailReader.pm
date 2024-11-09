@@ -8,10 +8,10 @@ use IO::Socket::SSL;
 use MIME::Parser;
 use Data::Dumper;    # For debugging
 
-use DateTimeHelper qw/parseEmailDateTime/;
+use DateTimeHelper ("parseEmailDateTime");
 
 use Exporter 'import';             # Import the Exporter module
-our @EXPORT_OK = qw(getEmails);    # Functions to export
+our @EXPORT_OK = ("getEmails");    # Functions to export
 
 # Opens connection to the mailbox in order to read emails and creates new ARRAY of HASHes where every array-item represents single email
 sub getEmails {

@@ -3,7 +3,7 @@ package Entities::MonitoringClientInfo;
 use strict;
 use warnings;
 
-use HTML::Escape qw(escape_html);
+use HTML::Escape ("escape_html");
 use Time::Piece;
 
 
@@ -25,7 +25,7 @@ sub new {
 
 
 sub getters {
-	return qw(version uptime memoryCapacity kernel);
+	return ("version", "uptime", "memoryCapacity", "kernel");
 }
 
 

@@ -3,8 +3,8 @@ package Entities::HelpdeskRequest;
 use strict;
 use warnings;
 
-use HTML::Escape qw(escape_html);
-use Constants    qw($HelpdeskRequestStateNew);
+use HTML::Escape ("escape_html");
+use Constants    ('$HelpdeskRequestStateNew');
 
 # constructor
 sub new {

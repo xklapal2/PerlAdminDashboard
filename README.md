@@ -219,7 +219,7 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
 
    ```perl
    use Exporter 'import'; # Import the Exporter module
-   our @EXPORT_OK = qw(hashPassword verifyPassword); # Functions to export
+   our @EXPORT_OK = ("hashPassword", "verifyPassword"); # Functions to export
    
    sub hashPassword {
        # feature implementation
@@ -245,7 +245,7 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
    
    # OR Option2
    use lib '.';
-   use Services::Crypto::PasswordHasher qw/hashPassword verifyPassword/; # import methods
+   use Services::Crypto::PasswordHasher ('hashPassword', 'verifyPassword'); # import methods
    
    my $hash = hashPassword($password);
    ```

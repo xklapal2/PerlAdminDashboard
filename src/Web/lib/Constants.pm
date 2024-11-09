@@ -6,7 +6,7 @@ use Readonly;
 use Exporter 'import';
 
 # Export constants on demand
-our @EXPORT_OK =qw(%helpdeskRequestStates $HelpdeskRequestStateNew $HelpdeskRequestStateInProcess $HelpdeskRequestStateDone getStateLabel);
+our @EXPORT_OK =('%helpdeskRequestStates', '$HelpdeskRequestStateNew', '$HelpdeskRequestStateInProcess', '$HelpdeskRequestStateDone', 'getStateLabel');
 
 # Define constants using Readonly
 Readonly our $HelpdeskRequestStateNew       => 0;
