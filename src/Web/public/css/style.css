@@ -1,3 +1,57 @@
+:root {
+    --color-o: #fca326;
+    /* orange */
+    --color-o-50: #fc6d26;
+    /* dark orange */
+    --color-o-100: #e24329;
+    /* darker orange */
+    --color-vio: #554488;
+    /* violet */
+    --color-vio-100: #222261;
+    /* dark violet */
+}
+
+.bg-o {
+    background-color: var(--color-o);
+}
+
+.bg-o-50 {
+    background-color: var(--color-o-50);
+}
+
+.bg-o-100 {
+    background-color: var(--color-o-100);
+}
+
+.bg-vio {
+    background-color: var(--color-vio);
+}
+
+.bg-vio-100 {
+    background-color: var(--color-vio-100);
+}
+
+/* Text Colors */
+.text-o {
+    color: var(--color-o);
+}
+
+.text-o-50 {
+    color: var(--color-o-50);
+}
+
+.text-o-100 {
+    color: var(--color-o-100);
+}
+
+.text-vio {
+    color: var(--color-vio);
+}
+
+.text-vio-100 {
+    color: var(--color-vio-100);
+}
+
 body {
     font-family: 'Roboto', sans-serif;
 }
@@ -22,11 +76,11 @@ footer {
 }
 
 .circular-grey-background {
-    background-color: grey;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 5px;
 }
 
 .canvas-container {

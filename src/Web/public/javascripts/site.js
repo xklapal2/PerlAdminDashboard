@@ -1,6 +1,8 @@
 
 window.addEventListener('load', function () {
     const alertPlaceholder = document.getElementById('alertPlaceholder');
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 });
 
 function triggerAlert(type, message, millis = 5000, withLoading = false) {
