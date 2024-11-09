@@ -77,10 +77,11 @@ footer {
 
 .circular-grey-background {
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 5px;
+}
+
+.os-icon {
+    height: 25px;
 }
 
 .canvas-container {
