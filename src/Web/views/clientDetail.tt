@@ -1,0 +1,86 @@
+    <div class="row">
+        <div class="col-12">
+            <div class="canvas-container">
+                <h1>Detail: <span class="text-primary">[% hostname %]</span></h1>
+                <canvas id="cpuUsageChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" language = "javascript" type = "text/javascript"></script>
+    <script language = "javascript" type = "text/javascript">
+
+        document.addEventListener("DOMContentLoaded", () => {
+            $(function(){
+            console.log(`loaded:`, `[% wsUrl %]`);
+            initWebSocketConnection('[% wsUrl %]');
+            });
+        });
+
+        // Initialize chart data
+        const labels = [];
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'CPU Usage (%)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                data: [],
+                fill: true,
+            }]
+        };
+
+        // Configuration options for the chart
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,  // Allow resizing based on container size
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time (seconds)',
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'CPU Usage (%)',
+                        },
+                        min: 0,
+                        max: 100,
+                    }
+                }
+            }
+        };
+
+        // Create the chart
+        const cpuUsageChart = new Chart(
+            document.getElementById('cpuUsageChart'),
+            config
+        );
+
+        // Function to simulate CPU data generation
+        function generateCpuUsage() {
+            const time = labels.length > 0 ? labels[labels.length - 1] + 1 : 0; // Increment time
+            const usage = Math.floor(Math.random() * 100); // Random CPU usage between 0-100%
+
+            // Add new data point
+            labels.push(time);
+            data.datasets[0].data.push(usage);
+
+            // Keep the last 20 data points on the graph
+            if (labels.length > 20) {
+                labels.shift();
+                data.datasets[0].data.shift();
+            }
+
+            // Update chart
+            cpuUsageChart.update();
+        }
+
+        // Set interval to generate new CPU usage data every second
+        setInterval(generateCpuUsage, 1000);
+    </script>

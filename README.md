@@ -41,9 +41,7 @@ The web app includes several functionalities:
 
   - **HTML**, **JavaScript**, [**Bootstrap**](https://getbootstrap.com/) (**CSS**)
 
-
 ## Prerequisites:
-
 
 ```bash
 # install curl
@@ -54,6 +52,9 @@ sudo curl -L http://xrl.us/installperlnix | bash
 
 # install sql lite
 sudo apt install sqlite3
+
+# Twiggy is a Plack handler that supports WebSockets
+cpanm Twiggy
 
 # Web Framework
 cpan isntall Dancer2
@@ -146,9 +147,19 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
 
    ```bash
    plackup bin/app.psgi
-   
+
    HTTP::Server::PSGI: Accepting connections at http://0:5000/
    127.0.0.1 - - [19/Oct/2024:14:26:52 +0200] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
+   ```
+
+   By default application runs using `HTTP::Server::PSGI` web server, but it can be changed to run app using handlers which adds enhanced functionality like **Twiggy**.
+
+   ```bash
+   DANCER_ENVIRONMENT=development plackup -s Twiggy -r $app
+
+   Running application bin/app.psgi...
+   Watching bin/app.psgi for file updates.
+   Twiggy: Accepting connections at http://0.0.0.0:5000/
    ```
 
 3. Automatic reloads on file save using `-r`.
@@ -189,8 +200,6 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
    DANCER_ENVIRONMENT=development plackup -r bin/app.psgi
    ```
 
-7. 
-
 ### 2 Authentication
 
 #### 2.1 [Creating First Standalone Module](https://www.geeksforgeeks.org/perl-modules/)
@@ -220,15 +229,15 @@ During the course I followed [Perl docs](https://www.perl.org/docs.html), [MetaC
    ```perl
    use Exporter 'import'; # Import the Exporter module
    our @EXPORT_OK = ("hashPassword", "verifyPassword"); # Functions to export
-   
+
    sub hashPassword {
        # feature implementation
    }
-   
+
    sub verifyPassword {
        # feature implementation
    }
-   
+
    1;
    ```
 
@@ -263,6 +272,12 @@ sqlite> .exit -- exit
 ```
 
 # Perl Notes
+
+## Dancer2
+
+- **Plack (toolkit)**: It is a set of tools for running `PSGI` applications. It provides middleware components and utilities for building and running web applications.
+- **Plackup**: Is a command-line tool provided by the Plack toolkit, which acts as a lightweight web server that runs applications conforming to the `PSGI` specs.
+- **PSGI**: *Perl Web Server Gateway Interface* - A specification for a standard interface between web servers and Perl web applications.
 
 ## Perl - OOP
 

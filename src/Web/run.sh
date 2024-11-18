@@ -62,7 +62,7 @@ EOF
         ;;
     app)
         echo "Running application $app..."
-        DANCER_ENVIRONMENT=development plackup -r $app
+        DANCER_ENVIRONMENT=development plackup -s Twiggy -r $app
         ;;
     mail)
         # Load username and password from the YAML file
@@ -120,6 +120,9 @@ EOF
     ;;
     client)
     perl bin/ResourceMonitoringClient.pl
+    ;;
+    clientWin)
+    perl bin/ResourceMonitoringClientWin.pl
     ;;
     *)
         echo "Invalid command. Available commands: db, dropdb, setdb, app, mail"

@@ -10,13 +10,15 @@ use URI;
 use Data::Dumper;    # For debugging
 use Time::Piece;
 
+use Plack::App::WebSocket;
+
 # custom modules
 use Entities::HelpdeskRequest;
 use Entities::MonitoringClientInfo;
-use PasswordHasher qw/hashPassword verifyPassword/;
-use EmailReader    qw/getEmails/;
+use PasswordHasher ("hashPassword", "verifyPassword");
+use EmailReader    ("getEmails");
 use DateTimeHelper ("formatDate");
-use Constants qw(%helpdeskRequestStates $HelpdeskRequestStateNew getStateLabel);
+use Constants ('%helpdeskRequestStates', '$HelpdeskRequestStateNew', 'getStateLabel');
 
 our $VERSION = '0.1';
 
@@ -29,7 +31,7 @@ get '/' => sub {
 	my @requests;
 	eval {
 		my @requestsDictionaries = database->quick_select( 'helpdeskRequests', {} );
-		@requests =map { Entities::HelpdeskRequest->new(%$_) } @requestsDictionaries;
+		@requests = map (Entities::HelpdeskRequest->new(%$_), @requestsDictionaries);
 	};
 
 	# print Dumper(@requests);
@@ -203,6 +205,18 @@ post '/monitoring/register' => sub {
 	return to_json( { status => 'Ok' } );
 };
 
+get '/client/detail/:hostname' => sub {
+	my $hostname = route_parameters->get('hostname');
+
+	return template(
+		'clientDetail',
+		{
+			'hostname' => $hostname,
+			'wsUrl' => "ws://localhost:5000/ws/$hostname"
+		}
+	);
+};
+
 # Display config
 get '/config' => sub {
 	my $jsonOptions = { pretty => 1, canonical => 1 };
@@ -221,6 +235,84 @@ get '/config' => sub {
 # 	if ( session('user') && $currentPath eq '/login' ) {
 # 		return redirect "/";
 # 	}
+# };
+
+
+####################################################
+###                   WebSockets                 ###
+####################################################
+
+# my %producers = ();
+# my %subscribers = ();
+
+# WebSocket endpoint for subscribers
+# get '/ws/:producer' => sub {
+# 	my $producer = route_parameters->get('producer');
+# 	my $env = request->env;
+
+# 	# Log to check when a WebSocket connection is attempted
+# 	warn "New WebSocket connection attempt for producer: $producer\n";
+
+# 	# Initialize WebSocket
+# 	Plack::App::WebSocket->new(
+# 		on_establish => sub {
+# 			my $ws = shift;
+
+# 			# Store WebSocket connection in subscribers hash
+# 			eval{push (@{ $subscribers{$producer} }, $ws);};
+
+# 			if($@){
+# 				warn "Error while connection to WS subscriber: $@\n";
+# 			}
+
+# 			# Send a welcome message to the client (optional)
+# 			# $ws->send("You are now subscribed to producer: $producer");
+
+# 			# Log when the connection is open
+# 			warn "WebSocket connection open for producer: $producer\n";
+
+# 			# Handle incoming messages (optional)
+# 			$ws->on(
+# 				message => sub {
+# 					my ($message) = @_;
+# 					warn "Received message: $message\n";
+# 				}
+# 			);
+
+# 			# Clean up connection when it's finished (closed)
+# 			$ws->on(
+# 				finish => sub {
+# 					@{ $subscribers{$producer} } = grep { $_ != $ws } @{ $subscribers{$producer} };
+# 					warn "WebSocket connection closed for producer: $producer\n";
+# 				}
+# 			);
+# 		}
+# 	)->call($env);
+# };
+
+
+# get '/wstest' => sub {
+# 	my $env = request->env;
+# 	print "Reached /wstest endpoint\n";
+
+# 	Plack::App::WebSocket->new(
+# 		on_establish => sub {
+# 			print "WebSocket established\n";
+# 			my ($ws, $psgi_env, @handshake_results) = @_;
+# 			print "WebSocket handshake completed. Handshake results: " . Dumper(\@handshake_results) . "\n";
+# 		},
+# 		on_error => sub {
+# 			eval{
+# 				print "WebSocket error occurred\n";
+# 				my ($env, $error) = @_;
+# 				print Dumper(@_);
+# 				print "WebSocket error occurred: ", (defined $error ? $error : 'Unknown error'), "\n";
+# 			};
+# 			if($@){
+# 				warn "Error on error: $@\n";
+# 			}
+# 		}
+# 	)->call($env);
 # };
 
 true;
