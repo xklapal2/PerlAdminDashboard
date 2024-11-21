@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 
 use Sys::Statistics::Linux;
 use Data::Dumper;    # For debugging
@@ -8,10 +7,14 @@ use HTTP::Request;
 use JSON;
 use Time::Piece;
 
-my $ua  = LWP::UserAgent->new;
-my $url = 'http://localhost:5000/monitoring/register';
+# Global scope
+our $ua  = LWP::UserAgent->new;
+our $baseUrl = "http://localhost:5000/monitoring";
+our $registerUrl = "$baseUrl/register";
+our $resourcesUrl = "$baseUrl/resources/";
+our $hostname = "";
 
-my $lxs = Sys::Statistics::Linux->new(
+our $lxs = Sys::Statistics::Linux->new(
 	sysinfo   => 1,
 	cpustats  => 1,
 	memstats  => 0,
@@ -29,17 +32,27 @@ my $lxs = Sys::Statistics::Linux->new(
 $lxs->init;
 
 
+sub getHostname{
+	my ($lxs) = @_;
+	my $stat = $lxs->get;
+	my $sysInfo = $stat->sysinfo();
+	return $sysInfo->{hostname};
+}
+
+
+sub init{
+	$hostname = getHostname($lxs);
+	print "hostname: $hostname \n";
+	register($lxs);
+}
+
+
 sub memtotalToGigabytes {
 	my ($memtotalStr) = @_;
 
-	# Removes any non-digit characters
-	$memtotalStr =~ s/\D//g;
-
-	# Forces numeric context
-	my $memtotalInt = $memtotalStr + 0;
-
-	# Convert kilobytes to gigabytes and round to two decimal places
-	return sprintf("%.2f", $memtotalInt / ( 1024 * 1024 ));
+	$memtotalStr =~ s/\D//g; # DigitOnly
+	my $memtotalInt = $memtotalStr + 0; # ToInt32
+	return sprintf("%.2f", $memtotalInt / ( 1024 * 1024 )); # KB to GB => Round to two deciaml places
 }
 
 
@@ -49,12 +62,10 @@ sub createRegistrationData {
 	my $stat = $lxs->get;
 	$sysInfo = $stat->sysinfo();
 
-	print Dumper($stat);
-
 	$uptime          = $sysInfo->{uptime};
 	$memtotal        = memtotalToGigabytes( $sysInfo->{memtotal} );
 	$version         = $sysInfo->{version};
-	$hostname        = $sysInfo->{hostname};
+	$hostname        = $hostname;
 	$kernel 		 = $sysInfo->{kernel};
 
 	return {
@@ -71,42 +82,71 @@ sub register {
 	my ($lxs) = @_;
 	my $registrationJson = encode_json( createRegistrationData($lxs) );
 
-	my $request = HTTP::Request->new( POST => $url );
+	my $request = HTTP::Request->new( POST => $registerUrl );
 	$request->header( 'Content-Type' => 'application/json' );
 	$request->content($registrationJson);
 
-	# Send the request
-	my $response = $ua->request($request);
+	my $response = $ua->request($request); # HTTP client send
 
-	# Check the response
 	if ( $response->is_success ) {
-		print "Response: ". $response->decoded_content;    # Print the response content
+		print "Registration: ". $response->decoded_content . "\n";
 	}else {
 		die "HTTP POST error code: ". $response->code . "\n". "HTTP POST error message: ". $response->message . "\n";
 	}
 }
 
-register($lxs);
 
-# # while (1) {
-# sleep 1;
-# my $stat = $lxs->get;
-# print Dumper($lxs);
-# print "CPU Usage: ",   $stat->cpustats->{cpu}->{total}, "%\n";
-# print "Memory Free: ", $stat->memstats->{memfree},      " KB\n";
-# my $cpu  = $lxs->get(1)->cpustats;
-# my $time = $lxs->gettime;
-# printf "%-20s%8s%8s%8s%8s%8s%8s%8s%8s\n", $time, @{ $cpu->{cpu} }{@order};
+sub createSystemMonitoringData {
+	my ($lxs) = @_;
 
-# # ram
-# my @top5 = $stat->pstop( ttime => 1 );
+	my $timestamp = getTime($lxs);
+	my $cpuTotal = $lxs->get(1)->cpustats->{cpu}->{total}; # Refresh statistics and get total CPU usage
 
-# $fileName = "f.txt";
-# open( fileHandle, '>', $fileName );
-# print fileHandle Dumper(@top5);
-# close(fileHandle);
+	return {
+		timestamp => $timestamp,
+		cpuTotal => $cpuTotal
+	};
 
-# # disk
+}
 
-# # }
+
+sub postStatus {
+	my ($lxs) = @_;
+	my $monitoringJson = encode_json( createSystemMonitoringData($lxs) );
+	print "$monitoringJson\n";
+
+	my $request = HTTP::Request->new( POST => $resourcesUrl . $hostname );
+	$request->header( 'Content-Type' => 'application/json' );
+	$request->content($monitoringJson);
+
+	# UDP behavior I don't care about response
+	$ua->request($request); # HTTP client send
+}
+
+
+sub getTime{
+	my ($lxs) = @_;
+	my ($date, $time) = $lxs->gettime();
+	return $date . "T" . $time;
+}
+
+
+init();
+
+while (1) {
+	sleep 3;
+	postStatus($lxs);
+
+	# ram
+	# print "Memory Free: ", $stat->memstats->{memfree},      " KB\n";
+	# my @top5 = $stat->pstop( ttime => 1 );
+
+	# $fileName = "f.txt";
+	# open( fileHandle, '>', $fileName );
+	# print fileHandle Dumper(@top5);
+	# close(fileHandle);
+
+	# disk
+
+}
 
