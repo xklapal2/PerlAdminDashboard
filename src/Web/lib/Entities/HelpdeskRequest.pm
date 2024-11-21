@@ -20,7 +20,7 @@ sub new {
 		progress  => $args{progress}  || $HelpdeskRequestStateNew,
 	};
 
-	bless $self, $class; # bless explained in readme.md: OOP -> Classes -> Bless
+	bless ($self, $class); # bless explained in readme.md: OOP -> Classes -> Bless
 	return $self;
 }
 
@@ -42,7 +42,7 @@ sub bodyReplaceLineEndsWithBreaks {
 	return $htmlBody;
 }
 
-# getters and setters
+# Getters and setters
 sub id {
 	$_[0]->{id} = $_[1] if defined $_[1];
 	$_[0]->{id};

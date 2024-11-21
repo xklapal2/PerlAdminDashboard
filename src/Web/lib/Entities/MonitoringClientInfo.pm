@@ -19,7 +19,7 @@ sub new {
 		lastConnectionTime => $args{lastConnectionTime} || ''
 	};
 
-	bless $self, $class; # bless explained in readme.md: OOP -> Classes -> Bless
+	bless ($self, $class); # bless explained in readme.md: OOP -> Classes -> Bless
 	return $self;
 }
 

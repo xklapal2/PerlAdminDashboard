@@ -249,12 +249,38 @@ get '/client/detail/:hostname' => sub {
 	);
 };
 
-# Display config
-get '/config' => sub {
+get '/client/status/:hostname' => sub {
+	my $hostname = route_parameters->get('hostname');
+
+	my @statusRecords;
+	eval {
+		my $results = database->quick_select(
+			'monitoringStatus',
+			{ hostname => $hostname },
+			{
+				order_by => { -desc => 'timestamp' },
+				limit    => 20
+			}
+		);
+
+		@statusRecords = map { Entities::MonitoringStatus->new(%$_) } @results;
+	};
+
+	if ($@) {
+		print "Error: $@";
+		status 'internal_server_error';
+		return to_json( { message => 'Oops... Something went wrong!' } );
+	}
+
+	return @statusRecords;
+  }
+
+  # Display config
+  get '/config' => sub {
 	my $jsonOptions = { pretty => 1, canonical => 1 };
 	my $config      = to_json( config(), $jsonOptions );
 	return template( 'config', { config => $config } );
-};
+  };
 
 # hook before => sub {
 # 	my $currentPath = request->path;
