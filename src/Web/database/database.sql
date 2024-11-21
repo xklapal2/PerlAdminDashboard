@@ -27,3 +27,10 @@ CREATE TABLE IF NOT EXISTS monitoringClients (
     memoryCapacity REAL NOT NULL,
     lastConnectionTime DATETIME NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS monitoringStatus (
+    hostname TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    cpu REAL NOT NULL,
+    PRIMARY KEY (hostname, timestamp)
+);
