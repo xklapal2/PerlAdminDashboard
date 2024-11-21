@@ -16,7 +16,7 @@ sub new {
 		version            => $args{version}            || '',
 		uptime             => $args{uptime}             || '',
 		memoryCapacity     => $args{memoryCapacity}     || 0,
-		lastConnectionTime => $args{lastConnectionTime} || '',
+		lastConnectionTime => $args{lastConnectionTime} || ''
 	};
 
 	bless $self, $class; # bless explained in readme.md: OOP -> Classes -> Bless

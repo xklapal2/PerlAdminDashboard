@@ -171,7 +171,7 @@ get '/monitoring' => sub {
 post '/monitoring/register' => sub {
 
 	eval {
-		my $body = request->body;
+		print request->body;
 
 		# Decode JSON returns hashReference and constructor requires direct accesss to hash
 		my $registration = Entities::MonitoringClientInfo->new(%{ decode_json( request->body ) } );
@@ -198,6 +198,38 @@ post '/monitoring/register' => sub {
 
 	if ($@) {
 		print "Error: $@";
+		status 'internal_server_error';
+		return to_json( { message => 'Oops... Something went wrong!' } );
+	}
+
+	return to_json( { status => 'Ok' } );
+};
+
+post '/monitoring/resources/:hostname' => sub {
+	my $hostname = route_parameters->get('hostname');
+
+	eval {
+		my $client = database->quick_select( 'monitoringClients',{ hostname => $hostname } );
+
+		if (!$client) {
+			return; # I don't want to accept unknown client's requests
+		}
+		my $resources = decode_json( request->body );
+		print "$resources->{cpuTotal}\n";
+		print "$resources->{timestamp}\n";
+
+		database->quick_insert(
+			'monitoringStatus',
+			{
+				hostname           => $client->{hostname},
+				timestamp             => $resources->{timestamp},
+				cpu            => $resources->{cpuTotal}
+			}
+		);
+	};
+
+	if ($@) {
+		print "Error during processing monitoring/resources/$hostname: $@";
 		status 'internal_server_error';
 		return to_json( { message => 'Oops... Something went wrong!' } );
 	}
