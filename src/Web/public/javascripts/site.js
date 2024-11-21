@@ -45,28 +45,28 @@ const defaultMessages = {
     error: "Ups... something went wrong!",
 };
 
-function initWebSocketConnection(wsUrl) {
-    console.log("Connecting to: ", wsUrl);
-    let socket = new WebSocket(wsUrl);
+// function initWebSocketConnection(wsUrl) {
+//     console.log("Connecting to: ", wsUrl);
+//     let socket = new WebSocket(wsUrl);
 
-    socket.onopen = function (event) {
-        console.log('WebSocket connection established');
-    };
+//     socket.onopen = function (event) {
+//         console.log('WebSocket connection established');
+//     };
 
-    socket.onmessage = function (event) {
-        console.log('Message from server:', event.data);
-    };
+//     socket.onmessage = function (event) {
+//         console.log('Message from server:', event.data);
+//     };
 
-    socket.onclose = function (event) {
-        console.log('WebSocket connection closed', event);
-        socket.close();
-    };
+//     socket.onclose = function (event) {
+//         console.log('WebSocket connection closed', event);
+//         socket.close();
+//     };
 
-    socket.onerror = function (error) {
-        console.error('WebSocket error:', error);
-    };
+//     socket.onerror = function (error) {
+//         console.error('WebSocket error:', error);
+//     };
 
-    $(window).on('beforeunload', function () {
-        socket.close();
-    });
-}
+//     $(window).on('beforeunload', function () {
+//         socket.close();
+//     });
+// }

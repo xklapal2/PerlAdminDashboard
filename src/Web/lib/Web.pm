@@ -15,6 +15,7 @@ use Plack::App::WebSocket;
 # custom modules
 use Entities::HelpdeskRequest;
 use Entities::MonitoringClientInfo;
+use Entities::MonitoringStatus;
 use PasswordHasher ("hashPassword", "verifyPassword");
 use EmailReader    ("getEmails");
 use DateTimeHelper ("formatDate");
@@ -214,9 +215,8 @@ post '/monitoring/resources/:hostname' => sub {
 		if (!$client) {
 			return; # I don't want to accept unknown client's requests
 		}
+
 		my $resources = decode_json( request->body );
-		print "$resources->{cpuTotal}\n";
-		print "$resources->{timestamp}\n";
 
 		database->quick_insert(
 			'monitoringStatus',
@@ -244,7 +244,7 @@ get '/client/detail/:hostname' => sub {
 		'clientDetail',
 		{
 			'hostname' => $hostname,
-			'wsUrl' => "ws://localhost:5000/ws/$hostname"
+			'statusUrl' => "http://localhost:5000/client/status/$hostname"
 		}
 	);
 };
@@ -253,18 +253,7 @@ get '/client/status/:hostname' => sub {
 	my $hostname = route_parameters->get('hostname');
 
 	my @statusRecords;
-	eval {
-		my $results = database->quick_select(
-			'monitoringStatus',
-			{ hostname => $hostname },
-			{
-				order_by => { -desc => 'timestamp' },
-				limit    => 20
-			}
-		);
-
-		@statusRecords = map { Entities::MonitoringStatus->new(%$_) } @results;
-	};
+	eval {@statusRecords = database->quick_select('monitoringStatus',{hostname => $hostname},{order_by => { desc => 'timestamp' },limit    => 20,columns => ["cpu", "timestamp"]});};
 
 	if ($@) {
 		print "Error: $@";
@@ -272,15 +261,16 @@ get '/client/status/:hostname' => sub {
 		return to_json( { message => 'Oops... Something went wrong!' } );
 	}
 
-	return @statusRecords;
-  }
+	return to_json(\@statusRecords);
+};
 
-  # Display config
-  get '/config' => sub {
+
+# Display config
+get '/config' => sub {
 	my $jsonOptions = { pretty => 1, canonical => 1 };
 	my $config      = to_json( config(), $jsonOptions );
 	return template( 'config', { config => $config } );
-  };
+};
 
 # hook before => sub {
 # 	my $currentPath = request->path;
