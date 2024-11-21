@@ -28,7 +28,10 @@ sub getEmails {
 	$imap->select('INBOX') or return undef;    # Open INBOX folder
 
 	# Search for all messages in the inbox
-	my @messages = $imap->search('ALL') or die "Search failed: $@\n";
+	my @messages = $imap->search('ALL') or do {
+		print("Search failed: $@\n");
+		return undef;
+	};
 
 	my @emails;
 

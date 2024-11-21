@@ -124,6 +124,9 @@ EOF
     clientWin)
     perl bin/ResourceMonitoringClientWin.pl
     ;;
+    bench)
+    sysbench --threads="$(nproc)" cpu run
+    ;;
     *)
         echo "Invalid command. Available commands: db, dropdb, setdb, app, mail"
         exit 1
